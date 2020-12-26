@@ -6,7 +6,7 @@ categories: stack-the-flag-2020
 permalink: /stack-the-flag-2020/bobs-idea
 ---
 
-This is the first challenge from the Cryptography section from Stack-The-Flag 2020 by csg-govtech.
+This is the first challenge from the Cryptography section of Stack-The-Flag 2020 by csg-govtech.
 
 ## Statement
 
@@ -16,7 +16,7 @@ The challenge is attached with a pcapng file (which can be open with [WireShark]
 
 ## Observation
 
-By analyzing the packages. We can find out the followings text are sent.
+I found out the following texts by analyzing the packages.
 
 ```
 p = 298161833288328455288826827978944092433
@@ -28,11 +28,11 @@ g^b = 64889049934231151703132324484506000958
 
 ![Package length of No. 107 and 109 is exceptionally big](/images/stack-the-flag-2020/bobs_1.png)
 
-Besides the text, There are also 2 packages that are exceptionally big compare to others. This suggests that some kind of file are being sent through the network.
+Besides the texts, there are also 2 packages that are exceptionally big compare to others. This indicate that maybe some kind of file had sent through the network.
 
 ## Solution
 
-First of all, I run `file` command on the 2 packages.
+First of all, I extract out the 2 large data from WireShark run `file` command on  it.
 
 ```shell
 $ file file_1.bin
@@ -41,25 +41,25 @@ $ file file_2.bin
 file_2.bin: data
 ```
 
-It tells us that `file_1.bin` is a zip file and `file_2.bin` is just some random data.
+It tells that `file_1.bin` is a zip file and `file_2.bin` is just some random data.
 
 This suggests that the file sent by Bob might be the combination of `file_1.bin` and `file_2.bin` as it was splitted during the process of transfering the file.
 
-By combining two of the file together,
+So now I combine two of the file together.
 
 ```shell
 $ cat file_1.bin file_2.bin > file.zip
 ```
 
-We open it using 7zip and it then requests for a password.
+I open it using 7zip and it then requests for a password.
 
 From the text sent by Bob. He told Alice that the password of the file is Diffie-Hellman key in digits.
 
 So this explains why `p, g, g^a, g^b` are sent in the network.
 
-Diffie-Hellman depends on the hardness of computing discrete logarithm problem. However, in this case Bob's `p` seems to be small enough for us to find `a` and `b`.
+Diffie-Hellman depends on the hardness of computing discrete logarithm problem. However, in this case Bob's `p` seems to be small enough to find `a` and `b`.
 
-So what I did was just throw it into some python code to find `a` and `b`.
+So what I did was just throw it into python code and let it do the work.
 
 ```python
 from sympy.ntheory.residue_ntheory import discrete_log
@@ -80,7 +80,7 @@ And it works! (took around 30 sec)
 
 From the tips given by the admin on discord, the flag format is in `csg-govtech{shared_secret}`
 
-I got stuck around here for like an hour because I don't know what the questions want LOL. Thank god my teammate @mimomomi saw the tips and tell me about it.
+I got stuck around here for like an hour because I didn't know what the question wants LOL. Thank god my teammate @mimomomi saw the tips and told me about it.
 
 Flag:
 `csg-govtech{246544130863363089867058587807471986686}`
