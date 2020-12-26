@@ -1,0 +1,8 @@
+---
+layout: single
+title:  "Can COViD steal Bob's idea?"
+date:   2020-12-26 13:17:31 +0800
+categories: stack-the-flag-2020
+permalink: /stack-the-flag-2020/bobs-idea
+---
+
