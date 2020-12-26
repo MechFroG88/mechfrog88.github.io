@@ -12,7 +12,7 @@ This is the first challenge from the Cryptography section of Stack-The-Flag 2020
 
 >Bob wants Alice to help him design the stream cipher’s keystream generator based on his rough idea. Can COViD steal Bob’s “protected” idea?
 
-The challenge is attached with a pcapng file (which can be open with [WireShark](https://www.wireshark.org/))
+The challenge is attached with a pcapng file (which can be opened with [WireShark](https://www.wireshark.org/))
 
 ## Observation
 
@@ -32,7 +32,7 @@ Besides the texts, there are also 2 packages that are exceptionally big compare 
 
 ## Solution
 
-First of all, I extract out the 2 large data from WireShark run `file` command on  it.
+First of all, I extract out the 2 large data from WireShark and run `file` command on it.
 
 ```shell
 $ file file_1.bin
@@ -43,9 +43,9 @@ file_2.bin: data
 
 It tells that `file_1.bin` is a zip file and `file_2.bin` is just some random data.
 
-This suggests that the file sent by Bob might be the combination of `file_1.bin` and `file_2.bin` as it was splitted during the process of transfering the file.
+This suggests that the file sent by Bob might be the combination of `file_1.bin` and `file_2.bin` as it was splitted during the process of transferring the file.
 
-So now I combine two of the file together.
+So now I combine both of the file together.
 
 ```shell
 $ cat file_1.bin file_2.bin > file.zip
@@ -53,13 +53,13 @@ $ cat file_1.bin file_2.bin > file.zip
 
 I open it using 7zip and it then requests for a password.
 
-From the text sent by Bob. He told Alice that the password of the file is Diffie-Hellman key in digits.
+From the text sent by Bob, he told Alice that the password of the file is Diffie-Hellman key in digits.
 
 So this explains why `p, g, g^a, g^b` are sent in the network.
 
-Diffie-Hellman depends on the hardness of computing discrete logarithm problem. However, in this case Bob's `p` seems to be small enough to find `a` and `b`.
+Diffie-Hellman depends on the hardness of computing discrete logarithm problems. However, in this case Bob's `p` seems to be small enough to find `a` and `b`.
 
-So what I did was just throw it into python code and let it do the work.
+So what I did was using sympy in python to find `a` and `b`.
 
 ```python
 from sympy.ntheory.residue_ntheory import discrete_log
