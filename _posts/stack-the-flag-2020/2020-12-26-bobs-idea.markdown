@@ -6,3 +6,81 @@ categories: stack-the-flag-2020
 permalink: /stack-the-flag-2020/bobs-idea
 ---
 
+This is the first challenge from the Cryptography section from Stack-The-Flag 2020 by csg-govtech.
+
+## Statement
+
+>Bob wants Alice to help him design the stream cipher’s keystream generator based on his rough idea. Can COViD steal Bob’s “protected” idea?
+
+The challenge is attached with a pcapng file (which can be open with [WireShark](https://www.wireshark.org/))
+
+## Observation
+
+By analyzing the packages. We can find out the followings text are sent.
+
+```
+p = 298161833288328455288826827978944092433
+g = 216590906870332474191827756801961881648
+g^a = 181553548982634226931709548695881171814
+g^b = 64889049934231151703132324484506000958
+```
+>Hi Alice, could you please help me to design a keystream generator according to the file I share in the file server so that I can use it to encrypt my 500-bytes secret message? Please make sure it run with maximum period without repeating the keystream. The password to protect the file is our shared Diffie-Hellman key in digits. Thanks.
+
+![Package length of No. 107 and 109 is exceptionally big](/images/stack-the-flag-2020/bobs_1.png)
+
+Besides the text, There are also 2 packages that are exceptionally big compare to others. This suggests that some kind of file are being sent through the network.
+
+## Solution
+
+First of all, I run `file` command on the 2 packages.
+
+```shell
+$ file file_1.bin
+file_1.bin: Zip archive data, at least v5.1 to extract
+$ file file_2.bin
+file_2.bin: data
+```
+
+It tells us that `file_1.bin` is a zip file and `file_2.bin` is just some random data.
+
+This suggests that the file sent by Bob might be the combination of `file_1.bin` and `file_2.bin` as it was splitted during the process of transfering the file.
+
+By combining two of the file together,
+
+```shell
+$ cat file_1.bin file_2.bin > file.zip
+```
+
+We open it using 7zip and it then requests for a password.
+
+From the text sent by Bob. He told Alice that the password of the file is Diffie-Hellman key in digits.
+
+So this explains why `p, g, g^a, g^b` are sent in the network.
+
+Diffie-Hellman depends on the hardness of computing discrete logarithm problem. However, in this case Bob's `p` seems to be small enough for us to find `a` and `b`.
+
+So what I did was just throw it into some python code to find `a` and `b`.
+
+```python
+from sympy.ntheory.residue_ntheory import discrete_log
+
+g = 216590906870332474191827756801961881648
+p = 298161833288328455288826827978944092433
+A = 181553548982634226931709548695881171814
+B = 64889049934231151703132324484506000958
+
+a = discrete_log(p,A,g)
+
+assert pow(g,a,p) == A
+
+print(pow(B,a,p))
+```
+
+And it works! (took around 30 sec)
+
+From the tips given by the admin on discord, the flag format is in `csg-govtech{shared_secret}`
+
+I got stuck around here for like an hour because I don't know what the questions want LOL. Thank god my teammate @mimomomi saw the tips and tell me about it.
+
+Flag:
+`csg-govtech{246544130863363089867058587807471986686}`
