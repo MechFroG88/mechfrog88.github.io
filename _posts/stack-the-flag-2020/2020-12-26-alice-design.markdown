@@ -6,7 +6,7 @@ categories: stack-the-flag-2020
 permalink: /stack-the-flag-2020/alice-design
 ---
 
-This is the second challenge from the Cryptography section of Stack-The-Flag 2020 by csg-govtech. It is an extended challenge from "Can COViD steal Bob's idea?" and can only be unlocked after you solved the first challenge.
+This is the second challenge from the Cryptography section of Stack-The-Flag 2020 by govtech-csg. It is an extended challenge from "Can COViD steal Bob's idea?" and can only be unlocked after you solved the first challenge.
 
 ## Statement
 
@@ -88,13 +88,13 @@ Bob did explicitly mention to let it run with maximum period. As the message is 
 
 After doing some research, I found out that only primorial polynomial in Galious field of 2 will gives maximum period. I then try all the primorial polynomial and brute force the inital value.
 
-Another thing I did was brute forcing all the possible starting from 12 shift register $$P^{i}$$ and $$S^{i}$$ and check if the decrypted text has `csg-govtech{` flag format in it.
+Another thing I did was brute forcing all the possible starting from 12 shift register $$P^{i}$$ and $$S^{i}$$ and check if the decrypted text has `govtech-csg{` flag format in it.
 
 Unfortunately, since the runtime is approximately $$O(2^n)$$, It got stuck shortly after and I couldn't find anything interesting.
 
 ## Solution
 
-After failing and stuck for several hours again, I have a sudden realization that `csg-govtech{` is actually quite long in terms of bits (it contains 96 bits). Also in practice, we usually dont use LFSR with too much shift registers. This gives me an idea on how to solve this question using the flag prefix.
+After failing and stuck for several hours again, I have a sudden realization that `govtech-csg{` is actually quite long in terms of bits (it contains 96 bits). Also in practice, we usually dont use LFSR with too much shift registers. This gives me an idea on how to solve this question using the flag prefix.
 
 Recall that 
 
