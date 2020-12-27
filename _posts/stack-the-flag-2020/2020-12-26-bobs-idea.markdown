@@ -78,9 +78,9 @@ print(pow(B,a,p))
 
 And it works! (took around 30 sec)
 
-From the tips given by the admin on discord, the flag format is in `csg-govtech{shared_secret}`
+From the tips given by the admin on discord, the flag format is in `govtech-csg{shared_secret}`
 
 I got stuck around here for like an hour because I didn't know what the question wants LOL. Thank god my teammate @mimomomi saw the tips and told me about it.
 
 Flag:
-`csg-govtech{246544130863363089867058587807471986686}`
+`govtech-csg{246544130863363089867058587807471986686}`
