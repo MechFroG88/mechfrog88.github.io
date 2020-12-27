@@ -68,6 +68,12 @@ author:
 
 include: ["_pages"]
 
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "G-HHR8C95XTY"
+    anonymize_ip: false # default
+
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
 
