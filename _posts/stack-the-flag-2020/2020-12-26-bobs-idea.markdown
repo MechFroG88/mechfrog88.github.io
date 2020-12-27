@@ -6,7 +6,7 @@ categories: stack-the-flag-2020
 permalink: /stack-the-flag-2020/bobs-idea
 ---
 
-This is the first challenge from the Cryptography section of Stack-The-Flag 2020 by csg-govtech.
+This is the first challenge from the Cryptography section of Stack-The-Flag 2020 by govtech-csg.
 
 ## Statement
 
