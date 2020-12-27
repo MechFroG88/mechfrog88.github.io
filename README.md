@@ -1,2 +1,3 @@
 # mechfrog88.github.io
-Personal Blog
+
+Personal dumps for some challenge ideas related to Cryptography, write-up for CTF and notes. 
