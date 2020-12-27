@@ -26,6 +26,10 @@ github_username:  mechfrog88
 minimal_mistakes_skin: dark
 remote_theme: "mmistakes/minimal-mistakes@4.21.0"
 
+markdown: kramdown
+kramdown:
+    math_engine: katex
+    
 # Build settings
 plugins:
   - jekyll-paginate
@@ -42,7 +46,25 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: true
+      author_profile: false
+
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: false
+
+
+author:
+  avatar: "/images/avatar.jpg"
+  name: "Tan Kel Zin"
+  bio: "I'm not a morning person"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/mechfrog88"
 
 include: ["_pages"]
 
