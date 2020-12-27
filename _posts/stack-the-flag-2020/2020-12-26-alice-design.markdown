@@ -38,7 +38,7 @@ Thanks to the professor, I realized that the image is just  linear-feedback shif
 
 The whole idea of LFSR is to use short bytes to generate one-time pad (OTP) for [XOR encryption](https://en.wikipedia.org/wiki/XOR_cipher). 
 
-XOR with perfectly random OTP has been proven to be perfectly secured, but it is not practical when we have to encrypt long bytes. Usually in XOR encryption, the key gets repeated when the message has a longer bytes than they key. The repetition of key makes it vulnerable to frequency analysis.
+XOR with perfectly random OTP has been proven to be perfectly secured, but it is not practical when we have to encrypt long bytes. Usually in XOR encryption, the key gets repeated when the message has a longer bytes than the key. The repetition of key makes it vulnerable to frequency analysis.
 
 Therefore, LFSR is developed to fix this issue. We give the system some random initial value and the size of the message we want to encrypt. LFSR will generate out a OTP for us to do the encryption.
 
@@ -100,7 +100,7 @@ Recall that
 
 $$S_{N+i} = (P_{0}\cdot S_{i} + P_{1}\cdot S_{i+1} + \cdots + P_{N-1+i}\cdot S_{N-1+i})\  \underline{mod}\  2$$
 
-Since there are 96 bits in `csv-govtech{`, I can form a linear system that consists of $$96-N$$ equations, where $$N$$ is the number of shift registers.
+Since there are 96 bits in `govtech-csg{`, I can form a linear system that consists of $$96-N$$ equations, where $$N$$ is the number of shift registers.
 
 $$
 \begin{pmatrix}
@@ -130,7 +130,7 @@ $$
 
 Then I solve the linear system and it will contain a solution for $$P_{0},P_{1},\cdots,P_{N-i}$$ if it is consistent.
 
-I also check if `csv-govtech{` starts at somewhere in the middle of the secret message. Turns out it is!
+I also check if `govtech-csg{` starts at somewhere in the middle of the secret message. Turns out it is!
 
 Here's the python code for the complete solution. 
 
