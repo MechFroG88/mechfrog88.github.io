@@ -21,7 +21,7 @@
 title: MechFroG88
 email: kelzzin2@gmail.com
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://mechfrog88.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  mechfrog88
 minimal_mistakes_skin: dark
 remote_theme: "mmistakes/minimal-mistakes@4.21.0"
