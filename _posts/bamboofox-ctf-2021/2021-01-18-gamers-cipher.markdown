@@ -180,6 +180,35 @@ Note: The $$+$$ and $$ \cdot $$ are nim's addition and multiplication.
 
 Now that's really great! Because we have n unknowns (which is each character of the flag) and n equations. We can then solve this using gaussian elimination.
 
+<button class="collapsible btn" id="matrix">Matrix</button>
+
+<div class="content" id="matrixdata" style="display:none" markdown="1">
+$$
+\begin{pmatrix}
+& key^{0 + 0(n - 1)} & key^{1 + 0(n - 2)} & key^{2 + 0(n - 3)} & \cdots & key^{n-1} \\
+& key^{0 + 1(n - 1)} & key^{1 + 1(n - 2)} & key^{2 + 1(n - 3)} & \cdots & key^{n-1} \\
+& key^{0 + 2(n - 1)} & key^{1 + 2(n - 2)} & key^{2 + 2(n - 3)} & \cdots & key^{n-1} \\
+& \vdots & \vdots & \vdots & \ddots &  \vdots \\
+& key^{0 + (n-1)(n-1)} & key^{1 + (n - 1)(n - 2)} & key^{2 + (n - 1)(n - 3)} & \cdots & key^{n-1}
+\end{pmatrix}
+\begin{pmatrix}
+m[0] \\
+m[1] \\
+m[2] \\
+\vdots \\
+m[n-1]
+\end{pmatrix}
+=
+\begin{pmatrix}
+flag[0] - key^{0} \\
+flag[1] - key^{1} \\
+flag[2] - key^{2} \\
+\vdots \\
+flag[n-1] - key^{n-1}
+\end{pmatrix}
+$$
+
+</div>
 Here's the python code for the complete solution. 
 
 ```python
