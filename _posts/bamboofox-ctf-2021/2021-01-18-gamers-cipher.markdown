@@ -166,19 +166,19 @@ Your encrypted flag:
 
 ## Observation
 
-I spent a lot of time analyzing the multiplication defined in the code only to realized that it is something well known online. The Nim group has well defined addition and multiplication which has additive inverse, multiplicative inverse, and addition and multiplication are both associative and commutative. There are also multiplicative identity 1 and additive identity 0. Here the wiki link, [Nimber](https://en.wikipedia.org/wiki/Nimber)
+I spent a lot of time analyzing the multiplication defined in the code only to realize that it is actually something well known. The Nim group has well defined addition and multiplication which has additive inverse, multiplicative inverse, associative and commutative for both addition and multiplication. There are also multiplicative identity 1 and additive identity 0. Here is the wiki link, [Nimber](https://en.wikipedia.org/wiki/Nimber)
 
 ## Solution
 
-The encrypted flag is basically means 
+Each element in the encrypted flag basically means 
 
 $$ flag[i] = key^{i} + f(key,i)$$
 
 $$ f(key,i) = \sum_{j = 0}^{n-1} m[j] \cdot key^{j} \cdot (key^{i})^{n-1-j} $$
 
-Note: The $$+$$ and $$ \cdot $$ are nim's addition and multiplication.
+Note: The $$+$$ and $$ \cdot $$ are nim's addition and multiplication respectively.
 
-Now that's really great! Because we have n unknowns (which is each character of the flag) and n equations. We can then solve this using gaussian elimination.
+Now that's really great! Because we have n unknowns (which is each character of the flag) and n equations. We can then find a solution using gaussian elimination.
 
 <button class="collapsible btn" id="matrix">Matrix</button>
 

@@ -37,15 +37,17 @@ Notice: timer starts *after* the server sends you all the logs. Generating logs 
 
 ## Observation
 
-Our task in this problem is to construct a minimum spanning tree that covers all the computers. Computers are the vertices, Diffie-Hellman key are the edges. To include an edge in our graph, we will have to find out the Diffie-Hellman shared key between the 2 networks.
+Our task in this problem is to construct a minimum spanning tree in the network. We can view computers as vertices, Diffie-Hellman key as edges. To include an edge in our graph, we will have to find out the Diffie-Hellman shared key between the 2 computers.
+
+We can find out Diffie-Hellman shared key with Pohlig–Hellman algorithm.
 
 ## Solution
 
-Since our attack cannot takes more than 5 seconds, we should prioritize the edges that take less time to attack i.e. Diffie-hellman take less time to find.
+Since our attack cannot takes more than 5 seconds, we should prioritize the edges that take less time to attack i.e. The time taken by Pohlig–Hellman algorithm is short.
 
-We know that if a order of the group is smooth then the process of breaking will be fast. Therefore I define the weight of the edge as $$100-i$$ where $$i$$ is the largest value such that $$2^{i}$$ is a factor of the group order.
+We know that the runtime of Pohlig–Hellman algorithm depends on the smoothness of the order of the group. Therefore I can define the weight of the edge as $$100-i$$ where $$i$$ is the largest value such that $$2^{i}$$ is a factor of the group order.
 
-I then use Kruskal algorithm to find the Minimum Spanning Tree.
+I can then use Kruskal algorithm to find the Minimum Spanning Tree.
 
 
 Here's the python code for the complete solution. 
