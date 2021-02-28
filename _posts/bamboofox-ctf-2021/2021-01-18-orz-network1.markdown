@@ -1,25 +1,39 @@
 ---
 layout: single
-title:  "Can COViD break Alice's design?"
-date:   2020-12-26 14:17:31 +0800
-categories: stack-the-flag-2020
-permalink: /stack-the-flag-2020/alice-design
+title:  "ORZ network"
+date:   2021-01-18 12:23:31 +0800
+categories: bamboofox-ctf-2021
+permalink: /bamboofox-ctf-2021/orz-network1
 ---
 
-This is the second challenge from the Cryptography section of Stack-The-Flag 2020 by govtech-csg. It is an extended challenge from "Can COViD steal Bob's idea?" and can only be unlocked after you solved the first challenge.
+This is the third challenge from the Cryptography section of BambooFox CTF 2021.
 
 ## Statement
 
-We are given a txt file contains 500 bytes expressed in hexadecimal.
+```
+Say hello to the newest orz network.
 
-This is the image from the zip file in challenge 1.
+There are 420 computers in this network, labeled from #1 to #420.
+For each pair of computers, there may be a secure connection between them.
+Each connection was initialized with a Diffie-Hellman key exchange under a multiplicative group modulo some prime number.
 
-![Bob's Design](/assets/images/stack-the-flag-2020/alice_1.png)
+Today you and your hacker friend are given a mission: hack into and control the entire orz network.
+
+Your friend had already hacked into and gained access to computer #1.
+If you have access to computer #A and have already hijacked the connection between computers #A and #B, then you can gain access to computer #B.
+To hijack a connection, all you have to do is to steal that connection's shared secret key (from the key exchange).
+
+However, the admins of orz network are very experienced, so you can only hijack at most 419 connections before getting caught.
+If your attack takes over 5 seconds, then you'll also get caught.
+
+Fortunately, you are given the details of all connections.
+You speak to yourself, "Isn't this the classic graph algorithm problem that I've solved a million times?"
+Well, yes. Find a list of 419 connections to hijack, so that you can gain access to every computer.
+Complete the mission, and you will be awarded the flag.
 
 
-Also recall the statement given by Bob to Alice.
-
->Hi Alice, could you please help me to design a **keystream generator** according to the file I share in the file server so that I can use it to encrypt my **500-bytes** secret message? Please make sure it run with **maximum period without repeating the keystream**.
+Notice: timer starts *after* the server sends you all the logs. Generating logs may take a few seconds, please be patient.
+```
 
 ## Observation
 
