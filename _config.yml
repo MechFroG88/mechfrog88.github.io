@@ -58,7 +58,7 @@ defaults:
 
 
 author:
-  avatar: "/assets/images/avatar.jpg"
+  avatar: "/images/avatar.jpg"
   name: "Tan Kel Zin"
   bio: "I'm not a morning person"
   links:

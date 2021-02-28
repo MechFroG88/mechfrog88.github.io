@@ -14,7 +14,7 @@ We are given a txt file contains 500 bytes expressed in hexadecimal.
 
 This is the image from the zip file in challenge 1.
 
-![Bob's Design](/assets/images/stack-the-flag-2020/alice_1.png)
+![Bob's Design](/images/stack-the-flag-2020/alice_1.png)
 
 
 Also recall the statement given by Bob to Alice.
