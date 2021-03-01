@@ -102,7 +102,7 @@ W.r....{C*.7........p.._K..%....; p.MSc(...;Qz......iIK.;#PF...Y.=..._].u.9.^.l.
 
 As we can see this is a RSA cryptosystem. Also, the question statement state that the person is using private key to encrypt. This means that we can just use public key to decipher the data.
 
-However, I got stuck here forat least 3 hours, not knowing what to do next. Because ideally there will be a cipher text which you can decrypt. But here we only get digital certificate, how am I suppose to get the flag? In fact I opened 2 tickets and asked about the goal of this challenge. Sadly, the organizer did not give me any hint or direction for me.
+However, I got stuck here for at least 3 hours, not knowing what to do next. Because ideally there will be a cipher text which you can decrypt. But here we only get digital certificate, how am I suppose to get the flag? In fact I opened 2 tickets and asked about the goal of this challenge. Sadly, the organizer did not give me any hint or direction for me.
 
 ## Solution
 
@@ -115,7 +115,6 @@ Then I extract and decrypt the data from the digital certificate with this code,
 ```python
 from OpenSSL import crypto as c
 from Crypto.Util.number import long_to_bytes, bytes_to_long
-import asn1
 cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
 m1 = cert.get_extension(0).get_data()
 m2 = cert.get_extension(1).get_data()
@@ -148,7 +147,7 @@ Therefore it must be some kind of encoding.
 
 After being depressed for 3 more hours and trying stupid things, I found that the structure of the bytes are very similar with the bytes of the initial certificate.
 
-When I open `sighhh.der` in notepad,
+When I opened `sighhh.der` in notepad,
 
 ```
 0‚S0‚; 	 Ðžh~&90
@@ -166,12 +165,11 @@ This gave me an insight that the data stored in the first extension might be ano
 
 And it really is!!
 
-So now I try to extract the data out and parse it as another digital certificate and do the same thing
+So I tried to extract the data out and parse it as another digital certificate and do the same decryption thing
 
 ```python
 from OpenSSL import crypto as c
 from Crypto.Util.number import long_to_bytes, bytes_to_long
-import asn1
 cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
 cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
 pubkey = cert.get_pubkey().to_cryptography_key().public_numbers()
@@ -199,7 +197,6 @@ Fantastic! Now we get the second part of the flag. Let's get the third part!
 ```python
 from OpenSSL import crypto as c
 from Crypto.Util.number import long_to_bytes, bytes_to_long
-import asn1
 cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
 cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
 cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
@@ -217,7 +214,7 @@ print(long_to_bytes(pow(c1,e,n)))
 b'\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00Signing is not encryption. | c3d644b27f6fc65d7e67d0ad}'
 ```
 
-Now I have finally solved the challenge. The complete solution code is given below.
+The flag is visible by combining 3 parts. The complete solution code is given below.
 
 ```python
 from OpenSSL import crypto as c

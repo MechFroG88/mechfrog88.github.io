@@ -6,11 +6,13 @@ categories: dso-nus-ctf-2021
 permalink: /dso-nus-ctf-2021/sekret
 ---
 
-This is the second challenge from the Mobile section of DSO-NUS CTF 2021. The challenge wants us to find the password of a user using OSINT. 
+This is the second challenge from the Mobile section of DSO-NUS CTF 2021. The challenge needs us to find the password of a user using OSINT. 
 
 ## Statement
 
-A super Sekret activity is going on. I wonder how many apps have this.
+What?? A secret activity?
+
+I wonder how many apps have these..
 
 We are given an apk.
 
@@ -19,7 +21,7 @@ We are given an apk.
 
 ## Observation
 
-First I decompile the apk using this website and get the source code in java.
+First I decompile the apk using this website to get the source code in java.
 
 [http://www.javadecompilers.com/apk](http://www.javadecompilers.com/apk)
 
@@ -133,9 +135,9 @@ I need to find a password for `f3917p` such that the hash is equal to `1f413f06c
 
 I tried reverse the sha-256 hash but found nothing.
 
-The next thing I try to do is to google the username `xYzKiRiToxYz`. Sadly, it doesnt give any interesting result.
+The next thing I try is to google the username `xYzKiRiToxYz`. Sadly, it still doesn't give any interesting result.
 
-Finally, I try username search with [`sherlock.py`](https://github.com/sherlock-project/sherlock)
+Finally, I did a username search with [`sherlock.py`](https://github.com/sherlock-project/sherlock)
 
 ```
 [*] Checking username xYzKiRiToxYz on:
@@ -151,11 +153,11 @@ Finally, I try username search with [`sherlock.py`](https://github.com/sherlock-
 [+] Xbox Gamertag: https://xboxgamertag.com/search/xYzKiRiToxYz
 ```
 
-Interestingly, there's a gitlab account with the username.
+Interestingly, there's a gitlab account associated with the username.
 
-Going in to the gitlab, I found the repo and source code for this apk. Although the password has also been removed in the latest version, I found the password `keeping_secrets_is_hard` in the previous commit.
+Going in to the gitlab account, I found a repo that has the source code for this apk. Although the password had been removed in the latest version, the password `keeping_secrets_is_hard` can still be found in the previous commit.
 
-Lastly, I generate the pre-hash flag with the following code.
+Lastly, I generated the pre-hash flag with the following code.
 
 We get `K33p1nG_sEcr3t5_15_h@rD`. Throwing it into SHA-256 hash and we will get the flag.
 

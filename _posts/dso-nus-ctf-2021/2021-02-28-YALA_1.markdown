@@ -6,11 +6,13 @@ categories: dso-nus-ctf-2021
 permalink: /dso-nus-ctf-2021/yala-1
 ---
 
-This is the fourth challenge from the Mobile section of DSO-NUS CTF 2021. The challenge wants us to brute force the password for the user.
+This is the fourth challenge from the Mobile section of DSO-NUS CTF 2021. The challenge needs us to brute force the password for the user.
 
 ## Statement
 
-A second login app
+Time to look at Yet Another Login App.
+
+Try to find the right credentials and login!
 
 We are given an apk.
 
@@ -19,7 +21,7 @@ We are given an apk.
 
 ## Observation
 
-First I decompile the apk using this website and get the source code in java.
+First I decompile the apk using this website to get the source code in java.
 
 [http://www.javadecompilers.com/apk](http://www.javadecompilers.com/apk)
 
@@ -154,7 +156,7 @@ I tried reverse the sha-256 hash but found nothing.
 
 So the next thing I do is to brute force the password with rockyou.txt . Hope that some weak password will produce the hash after added with ")(*&^%$#".
 
-I used the following code to brute force the password.
+I used the following code to find the password.
 
 ```python
 import hashlib

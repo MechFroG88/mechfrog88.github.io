@@ -1,7 +1,7 @@
 ---
 layout: single
 title:  "Poor Men"
-date:   2021-02-28 12:23:31 +0800
+date:   2021-02-28 11:23:31 +0800
 categories: dso-nus-ctf-2021
 permalink: /dso-nus-ctf-2021/poor-men
 ---
@@ -63,11 +63,11 @@ $$m_{i} \equiv \log_2c_{i}^{d} \text{ (mod } N)$$
 
 ## Solution
 
-Since in the question statement it has clearly stated the person use section 5.3 to implement the cryptosystem and there's something wrong about it.
+Since in the question statement it has clearly stated the person used section 5.3 to implement the cryptosystem and there's something wrong about it.
 
-What I did was making a wild guess that the person split a message with length N into N part and encrypt them one character at a time.
+What I did is making a wild guess that the person split a message with length N into N part and encrypt them one character at a time.
 
-Because if doing so, we can just brute force each character by replacing $$m_{i}$$ with an ascii character and check if the condition $$c_{i} \equiv 2^{m_{i} \cdot e} \text{ (mod } N)$$ is valid.
+The reason I made this guess is that this method of encryption is very vulnerable. In fact, we can just brute force each character by replacing $$m_{i}$$ with an ascii character and check if the condition $$c_{i} \equiv 2^{m_{i} \cdot e} \text{ (mod } N)$$ is valid with a small time complexity.
 
 Turns out my guess was right! :tada:
 
