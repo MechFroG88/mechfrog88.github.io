@@ -1,0 +1,239 @@
+---
+layout: single
+title:  "Sighhh"
+date:   2021-02-28 13:23:31 +0800
+categories: dso-nus-ctf-2021
+permalink: /dso-nus-ctf-2021/sighhh
+---
+
+This is the third challenge from the Web & Crypto section of DSO-NUS CTF 2021. The challenge uses digital certificate extension with ASN.1 encoding to store the flag.
+
+## Statement
+
+How about I use my private key to encrypt in public key cryptosystem?
+
+The challenge provided a digital certificate file.
+
+[cert](/assets/misc/sighhh.der)
+
+
+## Observation
+
+First let's look at what's inside the certificate.
+
+By using the command 
+
+`openssl x509 -inform der -in sighhh.der -noout -text`
+
+We get the output
+
+<button class="collapsible btn" id="output">output</button>
+
+<div class="content" id="outputdata" style="display:none" markdown="1">
+
+```
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            d0:0c:9e:1b:68:7e:26:39
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN = Sighhh, O = DSO-NUS-CTF-2021, C = SG
+        Validity
+            Not Before: Feb 22 16:01:47 2021 GMT
+            Not After : Feb 22 16:01:47 2022 GMT
+        Subject: CN = Sighhh, O = DSO-NUS-CTF-2021, C = SG
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                RSA Public-Key: (2048 bit)
+                Modulus:
+                    00:ae:b0:8f:31:42:63:a2:ef:6d:8d:65:10:92:b6:
+                    4e:de:dc:3f:96:f0:82:8b:71:a5:5e:bd:bc:3d:e1:
+                    04:1f:e9:8b:53:cd:de:3c:1a:dd:3d:30:24:20:56:
+                    0f:da:a4:5e:52:c8:02:98:a7:d5:03:6e:8b:42:46:
+                    36:ce:f3:6d:87:fa:64:6a:4e:56:35:c8:b5:cb:d3:
+                    10:a2:d9:19:a5:2a:e2:ad:b3:b4:7b:d7:ac:7a:b6:
+                    dc:3a:cf:d2:57:ad:fe:2e:d0:f1:0e:02:b4:53:26:
+                    7c:31:73:af:ec:4b:9e:0e:39:75:ca:2b:07:cd:46:
+                    08:5b:dd:f5:61:b8:af:54:7e:f6:56:72:7d:69:65:
+                    fa:b3:c4:fd:e2:b5:02:59:33:7b:1a:2e:b2:90:b1:
+                    b3:56:e4:90:e0:ec:a2:1b:d7:b1:fd:8a:7d:b1:b5:
+                    0a:dd:68:03:84:ec:e7:d2:d5:fd:d0:6d:42:fe:dc:
+                    28:54:b0:aa:8f:90:69:2c:80:1b:ef:46:e1:ab:53:
+                    e4:48:95:51:9f:34:12:fe:40:29:45:14:ee:2f:93:
+                    99:37:ca:e5:52:0f:3d:75:fd:ca:4f:8d:3f:b6:26:
+                    70:e7:7b:45:54:0e:dc:bc:ea:16:67:6b:36:b2:a7:
+                    1f:3d:96:9d:4e:99:14:ce:b0:97:84:01:7f:f9:0c:
+                    78:b5
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            2.5.19.67.65.49:
+..U....Sighhh1.0...U..............4.1...0
+..U....Sighhh1.0...U....U....SG0..
+..........0..-20211.0...U....SG0.."0
+.m....p.Dc....x.y..=!..A<C.s....`.?<..(....G.]...P@.O......n...3#...K...b.,.z"
+....3.~..4.)."....ol.m..6 ..x.#..>......s..k..\34....R.d.p.....F*PCf a ..;
+..U....Sighhh1.0...U.6F..oM........W..4...M_......A8...m..P...Q./........:0..60.....U.CA2....0...0.............~.>...0
+..U....Sighhh1.0...U....U....SG0..
+..........0..-20211.0...U....SG0.."0
+W.r....{C*.7........p.._K..%....; p.MSc(...;Qz......iIK.;#PF...Y.=..._].u.9.^.l.o...N..
+..?..J'?...r.....P.#nP.8.Fj....))`*:.LM6....TA,.2.L.....N%..yG..G.?.....J..W#.g.........0...0.....U.PART3........2X...L...?....~.6:o=..s..W.$.w.....lsX....zZ...>u...d...:...I....g.L.E"(.g^.=......=).%ko.#G....L.....HE....p8.cu......bh.0.;.{.....53jk... ...Z=..[....`.pQ.1~......e....'.-j:..-|s|.0.~.eA@..j{... ...5.~....y;..9.....>...../.%.....P?........b{.F;...me;...K....<v'k<1]...g.x=.........b..j.......l_..BB...d.`#....*....V..Ef`,...?... .G.@.v..iS..soN........P).|.Ea....,&./.......$x.:.}]......2.h.S.}.....>.....|............~.'.I.A~>..Q:.......u.U...ti..>]hQJ...+.T.u$f.... ..8.``&^....p+n.....=}l..p<.{...Z...{...Z..k.fA..ps....h.k.o.e..-..w.|....K......P.2.}s.>rn.).dc..qz..8=A..t......tH
+            2.5.19.80.65.82.84.49: critical
+                0......-.......x\q>s.....2].G....qc......O.Q..o.p_.....N..X..=?.RY6n.S.s....c>-q....h....B....J6P........,eVeZ......*.....@1..%....P.....d..M..
+.\.-i...)-.2....X.$..6....l.'.#.d..'...#.bZ{.......P.I."6.5..s...DX.$5..2.w.9.<......U....)......*?...z.s....-,2
+    Signature Algorithm: sha256WithRSAEncryption
+         90:1d:43:7b:73:32:e4:65:6c:26:9e:c1:e5:4b:64:fe:c9:1b:
+         e3:49:e9:73:5d:36:fe:c5:75:d6:57:8e:cb:5b:ca:92:dd:f0:
+         46:c3:2b:c4:25:4f:42:ce:52:ef:d6:4f:08:67:21:f9:5a:ff:
+         9b:8e:ea:b2:a7:ba:8c:c2:e5:0c:ff:b5:83:ae:0f:4f:57:a4:
+         e7:11:d4:48:72:b6:da:f0:36:f2:d9:3e:ff:a4:a4:9c:9b:14:
+         b7:cd:28:20:ef:f3:7a:cb:aa:a8:dc:c2:2f:9b:47:0f:ef:02:
+         e8:22:a9:cf:56:2d:47:d2:e1:59:a3:1b:ba:31:f6:8c:6a:c6:
+         d8:0d:b1:84:1e:93:a9:1b:6c:08:39:57:f3:e0:76:83:8c:14:
+         65:89:6b:b4:c1:3f:cb:11:87:5f:82:c0:59:ba:31:6e:6d:a0:
+         38:86:fa:09:05:b7:72:5a:81:f4:7d:23:76:7b:9c:8c:2d:89:
+         3c:58:5d:27:41:a5:95:89:84:1c:53:96:30:39:6b:8a:96:e4:
+         6f:3f:e3:67:95:1d:f8:04:ea:ef:0b:f3:5b:93:b2:40:de:90:
+         7b:96:86:15:7b:de:4f:e8:c1:7d:08:16:50:e4:d9:0c:cf:78:
+         cd:ff:dc:15:88:6a:34:cd:e4:24:32:e6:a3:41:8a:e0:11:0e:
+         81:91:da:38
+```
+</div>
+
+As we can see this is a RSA cryptosystem. Also, the question statement state that the person is using private key to encrypt. This means that we can just use public key to decipher the data.
+
+However, I got stuck here forat least 3 hours, not knowing what to do next. Because ideally there will be a cipher text which you can decrypt. But here we only get digital certificate, how am I suppose to get the flag? In fact I opened 2 tickets and asked about the goal of this challenge. Sadly, the organizer did not give me any hint or direction for me.
+
+## Solution
+
+After trying and googling around, I found out that we can actually save arbitrary data in extension of digital certificate. That's awesome! because now we know where the cipher text might be.
+
+Also note that there are 2 extensions in the cert i.e. two chunks of data.
+
+Then I extract and decrypt the data from the digital certificate with this code,
+
+```python
+from OpenSSL import crypto as c
+from Crypto.Util.number import long_to_bytes, bytes_to_long
+import asn1
+cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
+m1 = cert.get_extension(0).get_data()
+m2 = cert.get_extension(1).get_data()
+pubkey = cert.get_pubkey().to_cryptography_key().public_numbers()
+
+n = pubkey.n
+e = pubkey.e
+c1 = bytes_to_long(m1)
+c2 = bytes_to_long(m2)
+print(long_to_bytes(pow(c1,e,n)))
+print()
+print(long_to_bytes(pow(c2,e,n)))
+```
+
+```
+b'\x95\xa7\x8c\xdf\xc9\xe6?\xdd\xe1\x84\x1ad\xe4I(\x83Y\xa9\x01I\xf4"*\x1f\xcaQ\x9a\xb2(\x04\x93#o\xb8\xdev\xe7\xb7Z\xa6\x8c=\x9a\x04/\xcf\x04\xfd\xf9\xa76\xe8\xfb\xa8^\xdb5\xc6\x8a\x00n\xc8\n\x99N\xc5/Ka\x13\xc2q3\x97\xcf;I\x85vH\xfe0}$<\xa2\x0f0\x82q*\x1f}\xa1\xfa%\xdcd\x03\xd3)C-\xech\x17\xe7V\xa9EO\x9cCr\x1e\xab\xfd\x14\x8f\xf6\x10\x89\xc5\xa0\xd5\xda\xc6\x91_8\xb0\xad\xedY\x16\xfc5\x94\x88\x8f\xe2\xf4ZF\xf1\x93+\x0b7\xae:3\xd4A\xc20\xc5\xe6\x9e\n\x8cl\xc3\xb8V\xbf\xa4\xe8\xa7\x86\xc0\xdc\xe1\x04~\x02\xc9\xc9\xed3x\xdbn\xca\xa4\xef\xddl\xb4S&\xb5\xd31\xeeEt\xab!\x84\xc5,\xa1?\xe9\x98\xcf\xf6Y\xfcr\xfb\xdb\xb4!\xd2\xa4\xb4}\t\xd6\x1d\x99#\x80\x928\xe5)\xc3\xb6a\xe0\xd4)1\x80\x1a\xff\xfd\xeesFI`\t-\xea\'\xea\xd8f\xd8\x831\xfb'
+
+b'\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00If you can see this, it means that you have | DSO-NUS{02197697b152a2e6'
+```
+
+Awesome! a part of the flag is now visible. It means that I am at the right direction.
+
+But what about the other part of the flag?
+
+We can know for sure the first data of the extension is not RSA encrypted because visible text can be seen.
+
+For example, `..U....Sighhh1.0...U....U....SG0..`
+
+Therefore it must be some kind of encoding.
+
+After being depressed for 3 more hours and trying stupid things, I found that the structure of the bytes are very similar with the bytes of the initial certificate.
+
+When I open `sighhh.der` in notepad,
+
+```
+0‚S0‚; 	 Ðžh~&90
+	*†H†÷
+ 0910
+USighhh10U
+DSO-NUS-CTF-202110	USG0
+210222160147Z
+220222160147Z0910
+USighhh10U
+...
+```
+
+This gave me an insight that the data stored in the first extension might be another certificate.
+
+And it really is!!
+
+So now I try to extract the data out and parse it as another digital certificate and do the same thing
+
+```python
+from OpenSSL import crypto as c
+from Crypto.Util.number import long_to_bytes, bytes_to_long
+import asn1
+cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
+cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
+pubkey = cert.get_pubkey().to_cryptography_key().public_numbers()
+n = pubkey.n
+e = pubkey.e
+
+m1 = cert.get_extension(0).get_data()
+m2 = cert.get_extension(1).get_data()
+
+c1 = bytes_to_long(m1)
+c2 = bytes_to_long(m2)
+print(long_to_bytes(pow(c1,e,n)))
+print()
+print(long_to_bytes(pow(c2,e,n)))
+```
+
+```
+b'\xb3M\xe9+y\xe1:%\xf9b\xe8\x97\xb4\xb4\xa6\x89`\x83\xe3\xdd\x08%\x89\xab\xfa\xaf\xe13,v_\xb4\xff\x9cg6\xab\x07\xc3T_~\x153\x96\xda\xeag\xe7\x89a\xcf1\\B\xaaP\xac\x9b\xe4!\xef\xfb$5=\x8c\xd8\xf4\xd5GD\xffM\xe5\xe9\x909\x85\xb7pY\xae\x96K\x8a\x02<-\x9fK\xba\x99\x1e\x12\xd3\x11Vn\'\xe5\xb0\x06\x9e\xaf\xf3\xe0=_g\t\xcb\x0f&\xb1g\xde\x9e\x89o\xe4o\xd5\xe2\x07\x99.\xc1\x9eV\xb6\x89\xc0\x00\x07\xf3\xc8\x8f-\xe7C\\\x87\xe9t7\x80w0\xa7v\xd8\x14\xfc"\xc9}F5O\x8b\xfdKh\xf9!\x9b\n_\xe0I\xec!e\x81\xd9\x89\xea\xd2\x1a\xedw\xc3\x91\xa2\xe1(>6\xb44o\x89\xa8D\x02\x941\xf9\\\x98)\xd0\xb1\xa7\xb7\xc6\xb3\xdfu(\xd0\xd33\x17arV_\x9d\x17\xdf\xcf\xbc\x15\xeb\xc2t\xfae\x96\xc0\xb1\xfcT\x86|\x14\xff\xdem\x9a\xbe\xfd\x84\xed\xbfp\x9a>S\xd6p\xfb\x13\xc9'
+
+b'\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00verified these messages with the right keys. | d9d36efcfe0950664f6b88c8'
+```
+
+Fantastic! Now we get the second part of the flag. Let's get the third part!
+
+```python
+from OpenSSL import crypto as c
+from Crypto.Util.number import long_to_bytes, bytes_to_long
+import asn1
+cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
+cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
+cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
+pubkey = cert.get_pubkey().to_cryptography_key().public_numbers()
+n = pubkey.n
+e = pubkey.e
+
+m1 = cert.get_extension(0).get_data()
+
+c1 = bytes_to_long(m1)
+print(long_to_bytes(pow(c1,e,n)))
+```
+
+```
+b'\x01\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\x00Signing is not encryption. | c3d644b27f6fc65d7e67d0ad}'
+```
+
+Now I have finally solved the challenge. The complete solution code is given below.
+
+```python
+from OpenSSL import crypto as c
+from Crypto.Util.number import long_to_bytes, bytes_to_long
+import asn1
+cert = c.load_certificate(c.FILETYPE_ASN1, open('sighhh.der','rb').read())
+
+for i in range(3):
+    pubkey = cert.get_pubkey().to_cryptography_key().public_numbers()
+    n = pubkey.n
+    e = pubkey.e
+    m1 = cert.get_extension(cert.get_extension_count()-1).get_data()
+    c1 = bytes_to_long(m1)
+    print(long_to_bytes(pow(c1,e,n)))
+    if (i < 2):
+        cert = c.load_certificate(c.FILETYPE_ASN1, cert.get_extension(0).get_data())
+```
+
+flag : `DSO-NUS{02197697b152a2e6d9d36efcfe0950664f6b88c8c3d644b27f6fc65d7e67d0ad}`

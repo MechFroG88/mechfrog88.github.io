@@ -1,0 +1,211 @@
+---
+layout: single
+title:  "Sekret"
+date:   2021-02-28 14:23:31 +0800
+categories: dso-nus-ctf-2021
+permalink: /dso-nus-ctf-2021/sekret
+---
+
+This is the second challenge from the Mobile section of DSO-NUS CTF 2021. The challenge wants us to find the password of a user using OSINT. 
+
+## Statement
+
+A super Sekret activity is going on. I wonder how many apps have this.
+
+We are given an apk.
+
+[apk](/assets/misc/sekret.apk)
+
+
+## Observation
+
+First I decompile the apk using this website and get the source code in java.
+
+[http://www.javadecompilers.com/apk](http://www.javadecompilers.com/apk)
+
+Then by analyzing the source code we can find `SuperSekretActivity.java`
+
+Observe that the logic is just checking the password against a sha-256 hash
+
+<button class="collapsible btn" id="code">SuperSekretActivity.java</button>
+
+<div class="content" id="codedata" style="display:none" markdown="1">
+
+```java
+package com.dso.flashylighty;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertController;
+import java.security.MessageDigest;
+import java.util.Objects;
+import p000a.p002b.p003c.C0011d;
+import p000a.p002b.p003c.C0013e;
+
+public class SuperSekretActivity extends C0013e {
+
+    /* renamed from: o */
+    public EditText f3916o;
+
+    /* renamed from: p */
+    public EditText f3917p;
+
+    /* renamed from: q */
+    public Button f3918q;
+
+    /* renamed from: com.dso.flashylighty.SuperSekretActivity$a */
+    public class C1061a implements View.OnClickListener {
+        public C1061a() {
+        }
+
+        public void onClick(View view) {
+            String str;
+            if (Objects.equals(SuperSekretActivity.this.f3916o.getText().toString(), "xYzKiRiToxYz")) {
+                String obj = SuperSekretActivity.this.f3917p.getText().toString();
+                try {
+                    MessageDigest instance = MessageDigest.getInstance("SHA-256");
+                    instance.reset();
+                    byte[] digest = instance.digest(obj.getBytes());
+                    StringBuilder sb = new StringBuilder(digest.length * 2);
+                    int length = digest.length;
+                    for (int i = 0; i < length; i++) {
+                        sb.append(String.format("%02x", new Object[]{Integer.valueOf(digest[i] & 255)}));
+                    }
+                    str = sb.toString();
+                } catch (Exception unused) {
+                    str = null;
+                }
+                if (Objects.equals(str, "1f413f06cb30df064361e85d11c5da61e06db232e57f5b44cd3d33ab4a92e08e")) {
+                    SuperSekretActivity superSekretActivity = SuperSekretActivity.this;
+                    String obj2 = superSekretActivity.f3917p.getText().toString();
+                    Objects.requireNonNull(superSekretActivity);
+                    char[] charArray = obj2.toCharArray();
+                    try {
+                        charArray[0] = (char) (charArray[0] ^ ' ');
+                        charArray[1] = (char) (charArray[1] ^ 'V');
+                        charArray[2] = (char) (charArray[2] ^ 'V');
+                        charArray[4] = (char) (charArray[4] ^ 'X');
+                        charArray[6] = (char) (charArray[6] ^ ' ');
+                        charArray[9] = (char) (charArray[9] ^ ' ');
+                        charArray[12] = (char) (charArray[12] ^ 'V');
+                        charArray[14] = (char) (charArray[14] ^ 'F');
+                        charArray[16] = (char) (charArray[16] ^ 'X');
+                        charArray[17] = (char) (charArray[17] ^ 'F');
+                        charArray[20] = (char) (charArray[20] ^ '!');
+                        charArray[22] = (char) (charArray[22] ^ ' ');
+                    } catch (Exception unused2) {
+                        Log.w("generateFlag", "Oh no.");
+                    }
+                    String str2 = new String(charArray);
+                    Objects.requireNonNull(superSekretActivity);
+                    C0011d.C0012a aVar = new C0011d.C0012a(superSekretActivity);
+                    AlertController.C0708b bVar = aVar.f35a;
+                    bVar.f2358d = "Congrats!";
+                    bVar.f2360f = str2;
+                    aVar.mo15a().show();
+                    return;
+                }
+            }
+            Toast.makeText(SuperSekretActivity.this, "Authentication Failed Successfully ;)", 0).show();
+        }
+    }
+
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setContentView((int) R.layout.activity_super_sekret);
+        this.f3916o = (EditText) findViewById(R.id.username);
+        this.f3917p = (EditText) findViewById(R.id.password);
+        Button button = (Button) findViewById(R.id.btnLogin);
+        this.f3918q = button;
+        button.setOnClickListener(new C1061a());
+    }
+}
+```
+</div>
+
+## Solution
+
+I need to find a password for `f3917p` such that the hash is equal to `1f413f06cb30df064361e85d11c5da61e06db232e57f5b44cd3d33ab4a92e08e`.
+
+I tried reverse the sha-256 hash but found nothing.
+
+The next thing I try to do is to google the username `xYzKiRiToxYz`. Sadly, it doesnt give any interesting result.
+
+Finally, I try username search with [`sherlock.py`](https://github.com/sherlock-project/sherlock)
+
+```
+[*] Checking username xYzKiRiToxYz on:
+[+] Chess: https://www.chess.com/member/xYzKiRiToxYz
+[+] GitLab: https://gitlab.com/xYzKiRiToxYz
+[+] ICQ: https://icq.im/xYzKiRiToxYz
+[+] NameMC (Minecraft.net skins): https://namemc.com/profile/xYzKiRiToxYz
+[+] ProductHunt: https://www.producthunt.com/@xYzKiRiToxYz
+[+] Roblox: https://www.roblox.com/user.aspx?username=xYzKiRiToxYz
+[+] Spotify: https://open.spotify.com/user/xYzKiRiToxYz
+[+] Steamid: https://steamid.uk/profile/xYzKiRiToxYz
+[+] Twitter: https://mobile.twitter.com/xYzKiRiToxYz
+[+] Xbox Gamertag: https://xboxgamertag.com/search/xYzKiRiToxYz
+```
+
+Interestingly, there's a gitlab account with the username.
+
+Going in to the gitlab, I found the repo and source code for this apk. Although the password has also been removed in the latest version, I found the password `keeping_secrets_is_hard` in the previous commit.
+
+Lastly, I generate the pre-hash flag with the following code.
+
+We get `K33p1nG_sEcr3t5_15_h@rD`. Throwing it into SHA-256 hash and we will get the flag.
+
+```java
+import java.security.MessageDigest;
+
+class Sol {
+
+    public static void main(String args[]){
+        String username = "xYzKiRiToxYz";
+        String password = "keeping_secrets_is_hard";
+        try {
+            MessageDigest instance = MessageDigest.getInstance("SHA-256");
+            instance.reset();
+            byte[] digest = instance.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder(digest.length * 2);
+            int length = digest.length;
+            for (int i = 0; i < length; i++) {
+                sb.append(String.format("%02x",digest[i]));
+            }
+            String str = sb.toString();
+            System.out.println(str);
+        } catch (Exception unused) {
+
+        }
+        String ans = "1f413f06cb30df064361e85d11c5da61e06db232e57f5b44cd3d33ab4a92e08e";
+        System.out.println(ans);
+        char[] charArray = password.toCharArray();
+        try {
+            charArray[0] = (char) (charArray[0] ^ ' ');
+            charArray[1] = (char) (charArray[1] ^ 'V');
+            charArray[2] = (char) (charArray[2] ^ 'V');
+            charArray[4] = (char) (charArray[4] ^ 'X');
+            charArray[6] = (char) (charArray[6] ^ ' ');
+            charArray[9] = (char) (charArray[9] ^ ' ');
+            charArray[12] = (char) (charArray[12] ^ 'V');
+            charArray[14] = (char) (charArray[14] ^ 'F');
+            charArray[16] = (char) (charArray[16] ^ 'X');
+            charArray[17] = (char) (charArray[17] ^ 'F');
+            charArray[20] = (char) (charArray[20] ^ '!');
+            charArray[22] = (char) (charArray[22] ^ ' ');
+        } catch (Exception unused2) {
+            
+        }
+        String str2 = new String(charArray);
+        System.out.println(str2);
+    }
+    
+
+}
+```
+
+flag : `DSO-NUS{108e77465a2acf4f78008bcf6bc1f782ad470f1a5dcac91dd56906a5ae02c8da}`
