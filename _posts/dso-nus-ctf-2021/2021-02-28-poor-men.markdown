@@ -10,7 +10,7 @@ This is the first challenge from the Web & Crypto section of DSO-NUS CTF 2021. T
 
 ## Statement
 
-I followed the description in the section 5.3 to implement the cryptosystem. However, my friend who is a crypto expert told me that there's something wrong about this, can you figure it out?
+>I followed the description in the section 5.3 to implement the cryptosystem. However, my friend who is a crypto expert told me that there's something wrong about this, can you figure it out?
 
 A research paper on the attack, data.txt is attached with the question.
 

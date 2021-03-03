@@ -10,9 +10,7 @@ This is the second challenge from the Mobile section of DSO-NUS CTF 2021. The ch
 
 ## Statement
 
-What?? A secret activity?
-
-I wonder how many apps have these..
+>What?? A secret activity? I wonder how many apps have these..
 
 We are given an apk.
 

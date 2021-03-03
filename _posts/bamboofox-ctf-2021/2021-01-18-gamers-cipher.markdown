@@ -6,7 +6,7 @@ categories: bamboofox-ctf-2021
 permalink: /bamboofox-ctf-2021/gamers-cipher
 ---
 
-This is the first challenge from the Cryptography section of BambooFox CTF 2021.
+This is the first challenge from the Cryptography section of BambooFox CTF 2021. It introduced Nimber field and do encryption using it.
 
 ## Statement
 

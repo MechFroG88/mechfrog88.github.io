@@ -6,7 +6,7 @@ categories: stack-the-flag-2020
 permalink: /stack-the-flag-2020/alice-design
 ---
 
-This is the second challenge from the Cryptography section of Stack-The-Flag 2020 by govtech-csg. It is an extended challenge from "Can COViD steal Bob's idea?" and can only be unlocked after you solved the first challenge.
+This is the second challenge from the Cryptography section of Stack-The-Flag 2020 by govtech-csg. It uses LFSR stream cipher to encrypt 500 bytes of data and is an extended challenge from "Can COViD steal Bob's idea?".
 
 ## Statement
 

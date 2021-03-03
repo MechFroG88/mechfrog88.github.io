@@ -10,9 +10,7 @@ This is the fourth challenge from the Mobile section of DSO-NUS CTF 2021. The ch
 
 ## Statement
 
-Time to look at Yet Another Login App.
-
-Try to find the right credentials and login!
+>Time to look at Yet Another Login App. Try to find the right credentials and login!
 
 We are given an apk.
 

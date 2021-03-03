@@ -6,7 +6,7 @@ categories: bamboofox-ctf-2021
 permalink: /bamboofox-ctf-2021/orz-network
 ---
 
-This is the third challenge from the Cryptography section of BambooFox CTF 2021.
+This is the third challenge from the Cryptography section of BambooFox CTF 2021. The challenge wants us determine if a Diffie-hellman parameter is vulnerable find the MST of a network graph.
 
 ## Statement
 
