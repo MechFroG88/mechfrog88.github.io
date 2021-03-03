@@ -46,7 +46,8 @@ defaults:
       type: posts
     values:
       layout: single
-      author_profile: false
+      classes: wide
+      author_profile: true
 
   # _pages
   - scope:
@@ -54,7 +55,8 @@ defaults:
       type: pages
     values:
       layout: single
-      author_profile: false
+      classes: wide
+      author_profile: true
 
 
 author:
