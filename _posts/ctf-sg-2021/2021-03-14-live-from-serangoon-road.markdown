@@ -172,11 +172,11 @@ Notice that
 
 if $$a = 1$$ and $$b = 1$$ then $$f(a,b,c,d) = c \land d$$
 
-if $$a = 1$$ and $$b = 1$$ then $$f(a,b,c,d) = c \lor d$$
+if $$a = 1$$ and $$b = 0$$ then $$f(a,b,c,d) = c \lor d$$
 
-if $$a = 1$$ and $$b = 1$$ then $$f(a,b,c,d) = c$$
+if $$a = 0$$ and $$b = 1$$ then $$f(a,b,c,d) = c$$
 
-if $$a = 1$$ and $$b = 1$$ then $$f(a,b,c,d) = d$$
+if $$a = 0$$ and $$b = 0$$ then $$f(a,b,c,d) = d$$
 
 Nice!! I can then make the bruteforce code faster with these constraint.
 
