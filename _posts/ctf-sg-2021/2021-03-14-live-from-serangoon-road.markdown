@@ -6,7 +6,7 @@ categories: ctf-sg-2021
 permalink: /ctf-sg-2021/live-from-serangoon-road
 ---
 
-This is the third challenge from the Crypto section of CTF SG 2021. The challenge needs us to break Stream Cipher that uses 4 LFSR.
+This is the third challenge from the Crypto section of CTF SG 2021. The challenge needs us to break a Stream Cipher that uses 4 LFSR.
 
 ## Statement
 
@@ -105,13 +105,15 @@ The challenge provided us the taps, key length of all the 4 LFSR.
 
 The only thing that we don't know is the initial seed of the LFSR.
 
-Let $$a[i],b[i],c[i],d[i]$$ be the i-bit outputs of the 4 LFSR respectively
+Let $$a[i],b[i],c[i],d[i]$$ be the i-th outputs of the 4 LFSR respectively
 
 Let $$cip[i]$$ be the i-th bit of the cipertext 
 
 Let $$msg[i]$$ be the i-th bit of the plaintext 
 
-Define a function $$f(a,b,c,d) = ((a \oplus b) \land c) \lor ((\neg b \lor c) \land d)$$
+Define a function 
+
+$$f(a,b,c,d) = ((a \oplus b) \land c) \lor ((\neg b \lor c) \land d)$$
 
 The key for i-th bit is $$f(a[i],b[i],c[i],d[i])$$
 
@@ -119,9 +121,9 @@ $$cip[i] = msg[i] \oplus f(a[i],b[i],c[i],d[i])$$
 
 ## Solution
 
-I analyze $$f(a,b,c,d)$$ and see if I can get something interesting from it.
+I analyzed $$f(a,b,c,d)$$ and found some interesting property from it.
 
-I generated the truth table of $$f(a,b,c,d)$$
+Here's the truth table of $$f(a,b,c,d)$$
 
 $$
 \begin{array}{|c|c|c|c|c|}
@@ -178,23 +180,23 @@ if $$a = 0$$ and $$b = 1$$ then $$f(a,b,c,d) = c$$
 
 if $$a = 0$$ and $$b = 0$$ then $$f(a,b,c,d) = d$$
 
-Nice!! I can then make the bruteforce code faster with these constraint.
+Nice!! This can help me to brute force the key in a smarter way.
 
-My final solution is that I brute force for the seed for LFSR 1 and LFSR 2.
+So to solve this challenge, I brute force for the seed for LFSR 1 and LFSR 2
 
 This is doable because LFSR 1 and LFSR 2 only have key length of 8.
 
-Also, The tap for LFSR 3 and LFSR 4 is quite simple.
+On the other hand, LFSR 3 and LFSR 4 have key length of 24.
 
-Tap for LFSR 3 is 1310720. Which means that
+Tap for LFSR 3 is 1310720 `(0b000101000000000000000000)`. Which means that
 
 $$c[i+24] = c[i+3] \oplus c[i+5]$$
 
-Tap for LFSR 4 is 589824. Which means that
+Tap for LFSR 4 is 589824 `(0b000010010000000000000000)`. Which means that
 
 $$d[i+24] = d[i+4] \oplus d[i+7]$$
 
-Then I brute force for the seed for LFSR 3 and LFSR 4 with the following constraints.
+I can't just try every key from 0 to $$2^{24}$$ for LFSR 3 and LFSR 4 due to the long key length. However, the number of possible keys are greatly reduced with all these constraints based on the plaintext.
 
 $$
 c[i+24] = c[i+3] \oplus c[i+5]\\
@@ -202,7 +204,9 @@ d[i+24] = d[i+4] \oplus d[i+7]\\
 f(a[i],b[i],c[i],d[i]) = msg[i] \oplus cip[i]\\
 $$
 
-My code can find solution in less than 2 minutes on my laptop.
+My code can find solution in less than 2 minutes on my laptop. It uses a backtracking method similar to how we solve sudoku and 8 queen problem.
+
+Z3 is also possible but somehow it just doesn't work for me.
 
 Here's the python code for the complete solution.
 
