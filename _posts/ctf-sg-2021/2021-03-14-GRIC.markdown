@@ -1,0 +1,356 @@
+---
+layout: single
+title:  "GRIC"
+date:   2021-03-14 12:23:31 +0800
+categories: ctf-sg-2021
+permalink: /ctf-sg-2021/GRIC
+---
+
+This is the second challenge from the Crypto section of CTF SG 2021. The challenge needs us to find out the checksum letter when given a 10 digit number.
+
+## Statement
+
+>NRIC goes Global!
+
+nc chals.ctf.sg 10101
+
+The server code is provided
+
+<button class="collapsible btn" id="server">server.py</button>
+
+<div class="content" id="serverdata" style="display:none" markdown="1">
+
+```python
+#!/usr/local/bin/python3
+
+import sys
+import random
+
+LEN_GRIC = 10  # For whoever
+
+constants = [0] * LEN_GRIC
+sbox = list('ABCDEFGHJKLMRTXYZ')
+
+
+def setup():
+    global constants, sbox
+    constants = [random.randint(0, 17) for x in range(LEN_GRIC)]
+    random.shuffle(sbox)
+
+
+def get_checksum(n):
+    return sbox[sum(map(lambda x: int(x[0]) * int(x[1]), zip(n, constants))) % len(sbox)]
+
+
+def oracle():
+    sys.stdout.write("What GRIC do you want to get the last digit for?\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+    b = input()
+
+    if (b[0] != 'G' or len(b) != LEN_GRIC+1):
+        sys.stdout.write("Not a valid GRIC\n")
+        sys.stdout.flush()  # Everyone is fun to flush
+        return
+
+    for i in range(1, LEN_GRIC+1):
+        try:
+            int(b[i])
+        except:
+            sys.stdout.write(f"Not a valid GRIC.\n")
+            sys.stdout.flush()  # Everyone is fun to flush
+            return
+
+    sys.stdout.write(f"Your GRIC is {b}{get_checksum(b[1:])}\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+
+
+def challenge():
+    sys.stdout.write("Welcome to the challenge. Answer all 100 outputs correctly and you will get the flag\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+
+    for i in range(100):
+        a = "".join([str(random.randint(0, 9)) for x in range(LEN_GRIC)])
+        sys.stdout.write(f"What is the checksum letter of G{a}?\n")
+        sys.stdout.flush()  # Everyone is fun to flush
+        resp = input()[0]
+
+        if resp != get_checksum(a):
+            sys.stdout.write("Nope, that is the wrong answer. Goodbye!\n")
+            sys.stdout.flush()  # Everyone is fun to flush
+            exit(0)
+        else:
+            sys.stdout.write(f"Good job! Only {99 - i} more to go!\n")
+            sys.stdout.flush()  # Everyone is fun to flush
+
+    sys.stdout.write("Wow you did it. Congratulations! Here flag!\n")
+    sys.stdout.write("<CENSORED>\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+    exit(0)
+
+
+def print_help():
+    sys.stdout.write("Welcome to the (proof of concept) GRIC checker.\n")
+    sys.stdout.write("How may I help you?\n")
+    sys.stdout.write("(A)bout GRIC\n")
+    sys.stdout.write("(C)hallenge this proof of concept\n")
+    sys.stdout.write("(G)et checksum for a given GRIC number\n")
+    sys.stdout.write("(H)elp\n")
+    sys.stdout.write("(Q)uit\n\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+
+
+def print_about():
+    sys.stdout.write("Introducing GRIC: A revolutionary personal identification system designed for the global world.\n")
+    sys.stdout.write("We recognise the importance of having a system where everyone can be identified by a unique designation.\n")
+    sys.stdout.write("In many countries, individuals are not being tracked by the government because they are not registered.\n")
+    sys.stdout.write("As such, we realise a national level identity number is perhaps not a best solution.\n")
+    sys.stdout.write("That's why we created GRIC.\n")
+    sys.stdout.write("There will not be any need for your passports anymore. You can now travel with your 10 digit GRIC!\n")
+    sys.stdout.write("GRIC will take care of that, by being the all-in-one travel and licensing document.\n")
+    sys.stdout.write("Support GRIC, and support making the world more globalized today.\n")
+    sys.stdout.flush()  # Everyone is fun to flush
+
+
+def main():
+    setup()
+    print_help()
+    oracle_limit = 25
+
+    while True:
+        a = input()[0]
+
+        if a == 'A':
+            print_about()
+        elif a == 'H':
+            print_help()
+        elif a == 'Q':
+            sys.stdout.write("Goodbye!\n")
+            sys.stdout.flush()  # Everyone is fun to flush
+            exit(0)
+        elif a == 'C':\
+            challenge()
+        elif a == 'G':
+            sys.stdout.write(f"You can ask the oracle {oracle_limit} more times\n")
+            sys.stdout.flush()  # Everyone is fun to flush
+            if oracle_limit == 0:
+                sys.stdout.write("You are out of oracle tries. Goodbye\n")
+                sys.stdout.flush()  # Everyone is fun to flush
+                exit(0)
+            oracle()
+            oracle_limit -= 1
+
+        sys.stdout.write("How may I help you?\n\n")
+        sys.stdout.flush()  # Everyone is fun to flush
+
+
+if __name__ == '__main__':
+    main()
+```
+</div>
+
+## Observation
+
+The basic idea on how the checksum works is that it takes every `digit[i]`, multiply it with `constants[i]` and sum it together modulo 17 (length of sbox). 
+
+Let this final answer be `x`
+
+Then the checksum letter will be `sbox[x]`.
+
+More formally,
+
+$$\texttt{sbox}[( \sum_{i=0}^{9} \texttt{digit[i]} \cdot \texttt{constants[i]})\  \underline{mod} \  17]$$
+
+On every connection to the server, it will random shuffle the sbox and generate random constants.
+
+```python
+LEN_GRIC = 10  # For whoever
+
+constants = [0] * LEN_GRIC
+sbox = list('ABCDEFGHJKLMRTXYZ')
+
+
+def setup():
+    global constants, sbox
+    constants = [random.randint(0, 17) for x in range(LEN_GRIC)]
+    random.shuffle(sbox)
+```
+
+The server also provided us the ability to query the checksum of a number for 25 times.
+
+To get the flag, we need to answer 100 checksum question randomly generated by the server.
+
+## Solution
+
+First, notice that if we query `G1000000000`, we can get the value of `sbox[constants[1]]`.
+
+If the value of `constants[0]` is `1`, Then we can restore `sbox[1..9]` by just querying
+
+```python
+sbox[1] = checkSum(G1000000000)
+sbox[2] = checkSum(G2000000000)
+sbox[3] = checkSum(G3000000000)
+...
+sbox[9] = checkSum(G9000000000)
+```
+
+Now we have a problem because we can't retrive `sbox[10..16]`.
+
+But what if the value of `constants[1]` is also `1`? 
+
+Then now we got `constants[0] = 1` and `constants[1] = 1`
+
+We can then retrive the content of sbox with just 16 queries.
+
+```python
+sbox[1] = checkSum(G1000000000)
+sbox[2] = checkSum(G2000000000)
+sbox[3] = checkSum(G3000000000)
+...
+sbox[9] = checkSum(G9000000000)
+sbox[10] = checkSum(G9100000000)
+sbox[11] = checkSum(G9200000000)
+...
+sbox[16] = checkSum(G9700000000)
+```
+
+The only one character that is left out will then be `sbox[0]`
+
+Okay awesome, now we can retrive sbox if `constants[0] = 1` and `constants[1] = 1`.
+
+We can generalize this to `constants[i] = 1` and `constants[j] = 1`. Because `i` and `j` not necessarily has to be 0 and 1.
+
+However, we still have no idea what `constants[2..16]` is.
+
+Therefore we need to have 9 query.
+```python
+c0 = checkSum(G1000000000) # This has been queried in the previous part
+c1 = checkSum(G0100000000)
+c2 = checkSum(G0010000000)
+c3 = checkSum(G0001000000)
+...
+c9 = checkSum(G0000000001)
+```
+
+If we have already known the sbox, we can easily retrive back the constants.
+
+```python
+constants[0] = sbox.index(c0)
+constants[1] = sbox.index(c1)
+constants[2] = sbox.index(c2)
+constants[3] = sbox.index(c3)
+...
+constants[9] = sbox.index(c9)
+```
+
+Note that `constants[i] = constants[j]` if and only if $$c_{i} = c_{j}$$
+
+So the main idea on how to solve this solution is we first query with 10 queries,
+
+```python
+c0 = checkSum(G1000000000)
+c1 = checkSum(G0100000000)
+c2 = checkSum(G0010000000)
+c3 = checkSum(G0001000000)
+...
+c9 = checkSum(G0000000001)
+```
+
+We then be hopeful that there will be a pair `(i,j)` where `i != j`
+
+such that $$c_{i} = c_{j}$$ , `constants[i] = 1` and `constants[j] = 1`
+
+We then retrive back the sbox and constants with the above method with another 15 queries.
+
+If it fails, we try again and be more hopeful.
+
+We will pass the test in slightly less than `1/17` chance.
+
+Here's the python code for the complete solution.
+
+```python
+from pwn import *
+
+ok = False
+
+sbox = list('ABCDEFGHJKLMRTXYZ')
+
+
+while (not ok) :
+    s = 'A'
+    r = remote('chals.ctf.sg', 10101)
+    arr = []
+
+    for i in range(0,10):
+        r.recvuntil('\n\n')
+        r.sendline(b'G')
+        r.recvline()
+        r.recvline()
+        k = 1 << i
+        gric = 'G' + format(k, '010b')
+        r.sendline(gric.encode())
+        c = r.recvline().split()[-1][-1]
+        if (c in arr):
+            s = c
+            ok = True
+        arr.append(c)
+
+    if (not ok):
+        continue
+
+    arr.reverse()
+
+    ss = [0, chr(s)]
+
+    i1 = arr.index(s)
+    i2 = i1 + 1 + arr[i1+1:].index(s)
+    
+    for i in range(2,17):
+        r.recvuntil('\n\n')
+        r.sendline(b'G')
+        r.recvline()
+        r.recvline()
+        gric = list('G' + '0'*10)
+        gric[i1+1] = str(min(i,9))
+        gric[i2+1] = str(max(i-9,0))
+        r.sendline("".join(gric).encode())
+        c = chr(r.recvline().split()[-1][-1])
+        ss.append(c)
+    
+    for i in sbox:
+        if (i not in ss):
+            ss[0] = i
+            break
+
+    print(ss)
+
+    if (ss.count(ss[1]) > 1):
+        ok = False
+        continue
+
+    
+    constants = [ss.index(chr(i)) for i in arr]
+
+    print(constants)
+
+    r.recvuntil('\n\n')
+    r.sendline(b'C')
+    r.recvline()
+    for i in range(100):
+        gric = r.recvline().split()[-1]
+        count = 0
+        for j in range(1,11):
+            count += int(gric[j]) * constants[j-1]
+        count %= 17
+        r.sendline(ss[count])
+        res = r.recvline()
+        print(res)
+        if (res.split()[0] == b'Nope,'):
+            ok = False
+            r.close()
+            break
+
+print(r.recvline())
+print(r.recvline())
+```
+
+flag : `CTFSG{NRIC_m3meS_F0R_GRIC_7eENs}`
