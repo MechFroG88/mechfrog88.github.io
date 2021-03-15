@@ -255,15 +255,15 @@ c3 = checkSum(G0001000000)
 c9 = checkSum(G0000000001)
 ```
 
-We then be hopeful that there will be a pair `(i,j)` where `i != j`
+And be hopeful that there will be a pair `(i,j)` where `i != j`
 
 such that $$c_{i} = c_{j}$$ , `constants[i] = 1` and `constants[j] = 1`
 
-We then retrive back the sbox and constants with the above method with another 15 queries.
+We can retrive back the sbox and constants with the above method with another 15 queries.
 
 If it fails, we try again and be more hopeful.
 
-We will pass the test in slightly less than `1/17` chance.
+It will pass the test in slightly less than `1/17` chance.
 
 Here's the python code for the complete solution.
 
