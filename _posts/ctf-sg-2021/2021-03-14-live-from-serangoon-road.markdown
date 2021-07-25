@@ -107,7 +107,7 @@ The only thing that we don't know is the initial seed of the LFSR.
 
 Let $$a[i],b[i],c[i],d[i]$$ be the i-th outputs of the 4 LFSR respectively
 
-Let $$cip[i]$$ be the i-th bit of the cipertext 
+Let $$cip[i]$$ be the i-th bit of the ciphertext 
 
 Let $$msg[i]$$ be the i-th bit of the plaintext 
 
