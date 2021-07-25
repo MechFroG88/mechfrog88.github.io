@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/interstellar-chat
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge uses AES_CTR to encrypt stuff
+This is a challenge from Cryptography section of Standcon 2021. The challenge uses AES_CTR to encrypt stuff
 
 ## Statement
 

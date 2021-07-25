@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/rocket-ship-academy
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge provide you an encrypted text and a decryption oracle.
+This is a challenge from Cryptography section of Standcon 2021. The challenge provide you an encrypted text and a decryption oracle.
 
 ## Statement
 

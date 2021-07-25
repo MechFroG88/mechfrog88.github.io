@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/ingenuity-installer
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge wants us to forge a signature of a zip file.
+This is a challenge from Cryptography section of Standcon 2021. The challenge wants us to forge a signature of a zip file.
 
 ## Statement
 

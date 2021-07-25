@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/mind-reader
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge wants us to break the PRNG system.
+This is a challenge from Cryptography section of Standcon 2021. The challenge wants us to break the PRNG system.
 
 ## Statement
 

@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/space-papaya
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge used bad parameters for RSA encryption
+This is a challenge from Cryptography section of Standcon 2021. The challenge used bad parameters for RSA encryption
 
 ## Statement
 

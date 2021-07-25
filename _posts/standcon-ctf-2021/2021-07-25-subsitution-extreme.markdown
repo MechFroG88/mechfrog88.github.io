@@ -6,7 +6,7 @@ categories: standcon-2021
 permalink: /standcon-2021/substitution-extreme
 ---
 
-This is a challenge from Cryptography section of Standcon 2020. The challenge used subsitution cipher to encrypt a text.
+This is a challenge from Cryptography section of Standcon 2021. The challenge used subsitution cipher to encrypt a text.
 
 ## Statement
 
