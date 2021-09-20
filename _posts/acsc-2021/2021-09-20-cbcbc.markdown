@@ -1,0 +1,258 @@
+---
+layout: single
+title:  "CBCBC"
+date:   2021-09-20 12:23:31 +0800
+categories: acsc-2021
+permalink: /acsc-2021/cbcbc
+---
+
+This is the second crypto challenge from ASCS 2021. It tried to use double AES CBC to protect against padding oracle attack.
+
+## Statement
+
+>Wow, free flags! But encrypted with CBC... twice?
+
+<button class="collapsible btn" id="data">chal.py</button>
+
+<div class="content" id="datadata" style="display:none" markdown="1">
+
+```python
+#!/usr/bin/env python3
+
+import base64
+import json
+import os
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+from secret import hidden_username, flag
+
+key = os.urandom(16)
+iv1 = os.urandom(16)
+iv2 = os.urandom(16)
+
+
+def encrypt(msg):
+    aes1 = AES.new(key, AES.MODE_CBC, iv1)
+    aes2 = AES.new(key, AES.MODE_CBC, iv2)
+    enc = aes2.encrypt(aes1.encrypt(pad(msg, 16)))
+    return iv1 + iv2 + enc
+
+
+def decrypt(msg):
+    iv1, iv2, enc = msg[:16], msg[16:32], msg[32:]
+    aes1 = AES.new(key, AES.MODE_CBC, iv1)
+    aes2 = AES.new(key, AES.MODE_CBC, iv2)
+    msg = unpad(aes1.decrypt(aes2.decrypt(enc)), 16)
+    return msg
+
+
+def create_user():
+    username = input("Your username: ")
+    if username:
+        data = {"username": username, "is_admin": False}
+    else:
+        # Default token
+        data = {"username": hidden_username, "is_admin": True}
+    token = encrypt(json.dumps(data).encode())
+    print("Your token: ")
+    print(base64.b64encode(token).decode())
+
+
+def login():
+    username = input("Your username: ")
+    token = input("Your token: ").encode()
+    try:
+        data_raw = decrypt(base64.b64decode(token))
+    except:
+        print("Failed to login! Check your token again")
+        return None
+
+    try:
+        data = json.loads(data_raw.decode())
+    except:
+        print("Failed to login! Your token is malformed")
+        return None
+
+    if "username" not in data or data["username"] != username:
+        print("Failed to login! Check your username again")
+        return None
+
+    return data
+
+
+def none_menu():
+    print("1. Create user")
+    print("2. Log in")
+    print("3. Exit")
+
+    try:
+        inp = int(input("> "))
+    except ValueError:
+        print("Wrong choice!")
+        return None
+
+    if inp == 1:
+        create_user()
+        return None
+    elif inp == 2:
+        return login()
+    elif inp == 3:
+        exit(0)
+    else:
+        print("Wrong choice!")
+        return None
+
+
+def user_menu(user):
+    print("1. Show flag")
+    print("2. Log out")
+    print("3. Exit")
+
+    try:
+        inp = int(input("> "))
+    except ValueError:
+        print("Wrong choice!")
+        return None
+
+    if inp == 1:
+        if "is_admin" in user and user["is_admin"]:
+            print(flag)
+        else:
+            print("No.")
+        return user
+    elif inp == 2:
+        return None
+    elif inp == 3:
+        exit(0)
+    else:
+        print("Wrong choice!")
+        return None
+
+
+def main():
+    user = None
+
+    print("Welcome to CBCBC flag sharing service!")
+    print("You can get the flag free!")
+    print("This is super-duper safe from padding oracle attacks,")
+    print("because it's using CBC twice!")
+    print("=====================================================")
+
+    while True:
+        if user:
+            user = user_menu(user)
+        else:
+            user = none_menu()
+
+
+if __name__ == "__main__":
+    main()
+
+```
+</div>
+
+## Observation
+
+The objective of the challenge is to get the hidden_username.
+
+We are provided both decryption and encryption (partially) oracle.
+
+We are able to inject any string to the username section of the json data. The oracle will then spit out the encrypted text.
+
+`{"username": username, "is_admin": False}`
+
+The decryption oracle will let us know if there are any padding error in the decrypted data.
+
+## Solution
+
+The usual padding oracle attack in AES CBC does not require an encryption oracle. But it is not the case if AES CBC is used twice.
+
+Here I draw the diagram for the encryption scheme.
+
+![CBCBC](/assets/images/acsc-2021/CBCBC.png)
+
+$$iv_{1}, iv_{2}, c_{i}$$ is known
+
+Because padding oracle attack is based only on the chaining bytes and the output of each block, we can view the whole system as an blackbox.
+
+![CBCBC1](/assets/images/acsc-2021/CBCBC1.png)
+
+![CBCBC2](/assets/images/acsc-2021/CBCBC2.png)
+
+If $$t_{i}$$ is known, then it's possible to find $$p_{i+1}$$ with padding oracle attack.
+
+Note that $$t_{i}$$ and $$p_{i+1}$$ can swap places because of the xor property. 
+
+If $$p_{i+1}$$ is known, then it's possible to find $$t_{i}$$ with padding oracle attack.
+
+So the whole idea is to encrypt a known text using the encryption oracle provided.
+
+We use padding oracle attack to recover $$t_{i}$$ and recover the hidden username afterwards.
+
+Below is the python code solution for the challenge.
+
+```python
+from pwn import *
+import base64
+
+r = remote('167.99.77.49', 52171)
+
+username = b'R3' + b'a'*16
+r.sendline('1')
+r.sendline(username)
+r.recvuntil('token: \n')
+res = r.recvline()
+c = base64.b64decode(res)
+
+newiv = [0 for _ in range(16)]
+ori = [0 for _ in range(16)]
+pt = [0 for _ in range(16)]
+for byte in range(16):
+    for j in range(16 - byte, 16):
+        newiv[j] = ori[j] ^ (byte + 1)
+    for j in range(2 ** 8):
+        newiv[15 - byte] = j
+        payload = bytes(newiv) + c[32 + 16 * 0:64 + 16 * 0]
+        r.sendline('2')
+        r.sendline('hello')
+        r.sendline(base64.b64encode(payload))
+        r.recvuntil('Failed to login!')
+        res = r.recvline()
+        if (b'Your' in res):
+            ori[15 - byte] = j ^ (byte + 1)
+            pt[15 - byte] = ori[15 - byte] ^ ord('a')
+            print(bytes(pt))
+            break
+
+t1 = bytes(pt)
+
+r.sendline('1')
+r.sendline()
+r.recvuntil('token: \n')
+res = r.recvline()
+c = base64.b64decode(res)
+
+ans = b''
+
+newiv = [0 for _ in range(16)]
+ori = [0 for _ in range(16)]
+pt = [0 for _ in range(16)]
+for byte in range(16):
+    for j in range(16 - byte, 16):
+        newiv[j] = ori[j] ^ (byte +1)
+    for j in range(2 ** 8):
+        newiv[15 - byte] = j
+        payload = bytes(newiv) + c[32 + 16 * 0:64 + 16 * 0]
+        r.sendline('2')
+        r.sendline('hello')
+        r.sendline(base64.b64encode(payload))
+        r.recvuntil('Failed to login!')
+        if (b'Your' in r.recvline()):
+            ori[15 - byte] = j ^ (byte + 1)
+            pt[15 - byte] = ori[15 - byte] ^ t1[15 - byte]
+            print(ans + bytes(pt)) 
+            break
+ans += bytes(pt)
+```
+
+flag : `ACSC{wow_double_CBC_mode_cannot_stop_you_from_doing_padding_oracle_attack_nice_job}`

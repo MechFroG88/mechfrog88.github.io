@@ -1,0 +1,78 @@
+---
+layout: single
+title:  "Swap on Curve"
+date:   2021-09-20 12:23:31 +0800
+categories: acsc-2021
+permalink: /acsc-2021/swap
+---
+
+This is the fourth crypto challenge from ASCS 2021. It is an interesting question related to ECC.
+
+## Statement
+
+>One day, I tried to swap x and y coordinates of a Point on the Curve.
+
+
+<button class="collapsible btn" id="data">chal.py</button>
+
+<div class="content" id="datadata" style="display:none" markdown="1">
+
+```python
+#!/usr/bin/env python3
+
+from params import p, a, b, flag, y
+
+x = int.from_bytes(flag, "big")
+
+assert 0 < x < p
+assert 0 < y < p
+assert x != y
+
+EC = EllipticCurve(GF(p), [a, b])
+
+assert EC(x,y)
+assert EC(y,x)
+
+print("p = {}".format(p))
+print("a = {}".format(a))
+print("b = {}".format(b))
+
+```
+</div>
+
+## Observation
+
+The point is still remains valid after swapping the x and y coordinates.
+
+So objective is just to solve the equation :
+
+$$
+\begin{cases}
+y^{2} \equiv (x^{3} + ax + b) \text{ mod} (P)\\
+x^{2} \equiv (y^{3} + ay + b) \text{ mod} (P)\\
+\end{cases}
+$$
+
+## Solution
+
+The challenge can be solved just by using sage resultant and solve function.
+
+```python
+from sage.all import *
+from Crypto.Util.number import long_to_bytes
+
+p = 10224339405907703092027271021531545025590069329651203467716750905186360905870976608482239954157859974243721027388367833391620238905205324488863654155905507
+a = 4497571717921592398955060922592201381291364158316041225609739861880668012419104521771916052114951221663782888917019515720822797673629101617287519628798278
+b = 1147822627440179166862874039888124662334972701778333205963385274435770863246836847305423006003688412952676893584685957117091707234660746455918810395379096
+
+x,y = PolynomialRing(ZZ, ['x','y']).gens()
+f = x**3 + a*x + b - y**2
+g = y**3 + a*y + b - x**2
+
+poly = f.resultant(g, y).univariate_polynomial().change_ring(GF(p))
+for root in poly.roots():
+    m = root[0]
+    print(long_to_bytes(m))
+```
+
+flag : `ACSC{have_you_already_read_the_swap<-->swap?}`
