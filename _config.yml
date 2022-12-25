@@ -23,8 +23,8 @@ email: kelzzin2@gmail.com
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://mechfrog88.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  mechfrog88
-theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: dark
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
 
 atom_feed:
   hide: true
@@ -40,6 +40,7 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jemoji
+  - jekyll-include-cache
 
 defaults:
   # _posts
