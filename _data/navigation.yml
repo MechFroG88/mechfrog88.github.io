@@ -4,6 +4,21 @@ main:
     url: /write-ups
 
 docs:
+  - title: Wargames My 2022
+    children:
+      - title: Misc
+        url: /wargames-2022#misc
+      - title: OSINT
+        url: /wargames-2022#osint
+      - title: Web
+        url: /wargames-2022#web
+      - title: Steganography
+        url: /wargames-2022#steganography
+      - title: Boot2root
+        url: /wargames-2022#boot2root
+      - title: Cryptography
+        url: /wargames-2022#cryptography
+
   - title: ACSC 2021
     children:
       - title: "CBCBC"

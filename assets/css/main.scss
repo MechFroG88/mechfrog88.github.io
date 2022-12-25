@@ -12,7 +12,7 @@ $link-color: #539BF5;
 $link-color-hover: #73BBFF;
 $link-color-visited: #539BF5;
 
-.page__content p {
+.page__content p, .page__content li, .page__content dl{
     font-size: 0.8em !important;
 }
 .katex {
@@ -28,11 +28,28 @@ a {
     color: #539BF5 !important;
 }
 
-.sidebar.sticky {
-    max-height: none !important;
-    position: relative !important;
+.sidebar {
+    position: sticky !important;
 }
 
+::-webkit-scrollbar {
+    width: 20px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #d6dee1;
+    border-radius: 20px;
+    border: 6px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #a8bbbf;
+}
 
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
