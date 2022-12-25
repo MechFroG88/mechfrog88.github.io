@@ -2,5 +2,50 @@
 main:
   - title: "Write-ups"
     url: /write-ups
-  - title: "Notes"
-    url: /notes
+
+docs:
+  - title: ACSC 2021
+    children:
+      - title: "CBCBC"
+        url: /acsc-2021/cbcbc
+      - title: "RSA stream"
+        url: /acsc-2021/rsa-stream
+      - title: "Swap on Curve"
+        url: /acsc-2021/swap
+
+  - title: CTF SG 2021
+    children:
+      - title: "GRIC"
+        url: /ctf-sg-2021/GRIC
+      - title: "Live From Serangoon Road"
+        url: /ctf-sg-2021/live-from-serangoon-road
+      - title: "Long Long Encrypt"
+        url: /ctf-sg-2021/long-long-encrypt
+
+  - title: DSO-NUS 2021
+    children:
+      - title: "Poor Men"
+        url: /dso-nus-ctf-2021/poor-men
+      - title: "Protect the Vaccine"
+        url: /dso-nus-ctf-2021/protect-the-vaccine
+      - title: "Sekret"
+        url: /dso-nus-ctf-2021/sekret
+      - title: "Sighhh"
+        url: /dso-nus-ctf-2021/sighhh
+      - title: "YALA (PART 1)"
+        url: /dso-nus-ctf-2021/yala-1
+
+  - title: Bamboofox 2021
+    children:
+      - title: "Gamer's Cipher"
+        url: /bamboofox-ctf-2021/gamers-cipher
+      - title: "ORZ network"
+        url: /bamboofox-ctf-2021/orz-network
+
+  - title: Stack The Flag 2020
+    children:
+      - title: "Can COViD break Alice's design?"
+        url: /stack-the-flag-2020/alice-design
+      - title: "Can COViD steal Bob's idea?"
+        url: /stack-the-flag-2020/bobs-idea
+

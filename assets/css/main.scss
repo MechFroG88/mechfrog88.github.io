@@ -1,0 +1,38 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+search: false
+---
+
+@charset "utf-8";
+
+$background-color: #22272E;
+$primary-color: #539BF5;
+$text-color: #F1F1F1;
+$link-color: #539BF5;
+$link-color-hover: #73BBFF;
+$link-color-visited: #539BF5;
+
+.page__content p {
+    font-size: 0.8em !important;
+}
+.katex {
+    font-size: 1.1em !important;
+}
+div.highlighter-rouge {
+    font-size: 0.7em !important;
+}
+a { 
+    text-decoration: none; 
+}
+.nav__list .nav__items .active {
+    color: #539BF5 !important;
+}
+
+.sidebar.sticky {
+    max-height: none !important;
+    position: relative !important;
+}
+
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
+@import "minimal-mistakes"; // main partials

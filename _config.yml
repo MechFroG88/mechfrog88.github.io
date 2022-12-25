@@ -23,8 +23,11 @@ email: kelzzin2@gmail.com
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://mechfrog88.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  mechfrog88
+theme: minimal-mistakes-jekyll
 minimal_mistakes_skin: dark
-remote_theme: "mmistakes/minimal-mistakes@4.21.0"
+
+atom_feed:
+  hide: true
 
 markdown: kramdown
 kramdown:
@@ -37,7 +40,6 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jemoji
-  - jekyll-include-cache
 
 defaults:
   # _posts
@@ -46,23 +48,20 @@ defaults:
       type: posts
     values:
       layout: single
-      classes: wide
-      author_profile: true
+      show_date: true
 
-  # _pages
   - scope:
       path: ""
-      type: pages
     values:
-      layout: single
       classes: wide
-      author_profile: true
+      sidebar:
+        nav: "docs"
 
 
 author:
   avatar: "/assets/images/avatar.jpg"
   name: "Tan Kel Zin"
-  bio: "I'm not a morning person"
+  bio: "I usually do crypto :P 🔒"
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
@@ -76,9 +75,10 @@ analytics:
     tracking_id: "G-HHR8C95XTY"
     anonymize_ip: false # default
 
-paginate: 5 # amount of posts to show
+paginate: 10 # amount of posts to show
 paginate_path: /page:num/
 
+repository: "MechFroG88/mechfrog88.github.io"
 
 # Exclude from processing.
 # The following items will not be processed, by default.
