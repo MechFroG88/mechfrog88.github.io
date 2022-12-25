@@ -31,16 +31,16 @@ print('''\033[94m
 (             )  ♡   (             )☆ ♡
 ╰◟◞ ͜ ◟◞╭◜◝ ͡ ◜◝╮ ͜ ◟◞╯♡ 
 . ☆  ㅤㅤ(                )☆ ♡
-♡ 　      ╰◟◞ ͜ ◟◞╯ . ☆
+♡        ╰◟◞ ͜ ◟◞╯ . ☆
 
-	[Secure Dream v1.0]
+    [Secure Dream v1.0]
 \033[0m''')
 
 payload = input("What is your dream in life?\n")
 if any(filter(lambda c: c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"\'', payload)):
-	print("\nA𝒘𝒘... W𝒆 𝒅𝒐𝒏'𝒕 𝒖𝒏𝒅𝒆𝒓𝒔𝒕𝒂𝒏𝒅 𝒚𝒐𝒖𝒓 𝒅𝒓𝒆𝒂𝒎 :(")
+    print("\nA𝒘𝒘... W𝒆 𝒅𝒐𝒏'𝒕 𝒖𝒏𝒅𝒆𝒓𝒔𝒕𝒂𝒏𝒅 𝒚𝒐𝒖𝒓 𝒅𝒓𝒆𝒂𝒎 :(")
 else:
-	eval(payload)
+    eval(payload)
 
 ```
 
@@ -56,28 +56,30 @@ The goal of this challenge is to write the flag from the server
 
 #### Solution
 
-At first I was searching for method to code python without alphabets, apparently this is [possible](https://ctftime.org/writeup/10726) in python2 with backtick ``. But since the server was running on python3, this method will not work.
+At first, I was searching for a method to code python without alphabets, apparently, this is [possible](https://ctftime.org/writeup/10726) in python2 with backtick ``. But since the server was running on python3, this method will not work.
 
-I got stuck for quite some time until the organizers released this hint
+I got stuck for a while until the organizers released this hint
 
 > Is print(1) == 𝒑𝒓𝒊𝒏𝒕(1) ? Maybe? Really?
 
-Observe that the first `print` is regular string, the second `𝒑𝒓𝒊𝒏𝒕` was italic.
+Observe that the first `print` is a regular string, and the second `𝒑𝒓𝒊𝒏𝒕` was italic.
 
-I thought that this might means that python accepts unicode character as the function name, so we can just provide italic character to python the filter
+I thought that this might mean that python accepts Unicode character as the function name, so I can just provide italic characters to bypass the filter
 
-So I opened a python terminal and try it out and it really works!
+I opened a python terminal to try it out
 
 ```python
 >>> 𝒑𝒓𝒊𝒏𝒕("hello")
 hello
 ```
 
-Great! now that we can use every alphabets, we just need to find a bypass the string literal restriction.
+It works!
+
+Great! Now that I can use every lowercase character, I just need to find a way to bypass the string literal restriction.
 
 It is not difficult to do this by using the `bytes()` function
 
-First I convert the command
+First I convert the code
 
 `print(open('flag.txt').read())` to bytes
 
@@ -114,16 +116,16 @@ print('''\033[94m
 (             )  ♡   (             )☆ ♡
 ╰◟◞ ͜ ◟◞╭◜◝ ͡ ◜◝╮ ͜ ◟◞╯♡ 
 . ☆  ㅤㅤ(                )☆ ♡
-♡ 　      ╰◟◞ ͜ ◟◞╯ . ☆
+♡        ╰◟◞ ͜ ◟◞╯ . ☆
 
-	[Secure Dream v1.0]
+    [Secure Dream v1.0]
 \033[0m''')
 
 payload = input("What is your dream in life?\n")
 if any(filter(lambda c: c in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"\'+', payload)):
-	print("\nA𝒘𝒘... W𝒆 𝒅𝒐𝒏'𝒕 𝒖𝒏𝒅𝒆𝒓𝒔𝒕𝒂𝒏𝒅 𝒚𝒐𝒖𝒓 𝒅𝒓𝒆𝒂𝒎 :(")
+    print("\nA𝒘𝒘... W𝒆 𝒅𝒐𝒏'𝒕 𝒖𝒏𝒅𝒆𝒓𝒔𝒕𝒂𝒏𝒅 𝒚𝒐𝒖𝒓 𝒅𝒓𝒆𝒂𝒎 :(")
 else:
-	eval(payload)
+    eval(payload)
 
 ```
 
@@ -135,7 +137,7 @@ Secure Dream v2.0 is just the same as v1.0 but with `+` character blacklisted
 
 #### Solution
 
-My solution for v1.0 did not use the `+` character so this question is instant solve with the same payload
+My solution for v1.0 did not use the `+` character so I solved this question with the same payload
 
 Final payload
 
@@ -155,34 +157,31 @@ Final payload
 
 #### Solution
 
-The organizer have hinted that all the flags are in `wgmy{}` format and we are not required to add the flag format ourselves.
+The organizer has hinted that all the flags are in `wgmy{}` format and we are not required to add the flag format ourselves.
 
 So I started to think where can one provide a flag with the image as a hint? 
 
-And I immediately thought of social media and google review.
+And I immediately thought of social media and google reviews.
 
-But since the question was `Where Am I` so I thought google review might be the more probable place.
+But since the question was `Where Am I` so google review might be the more probable option.
 
-I search for all [Texas Chicken outlets](https://www.texaschickenmalaysia.com/nearest-texas-chicken-store/) in Malaysia and find the outlet that looks like the picture.
+I searched for all [Texas Chicken outlets](https://www.texaschickenmalaysia.com/nearest-texas-chicken-store/) in Malaysia to find the outlet that looked like the picture.
 
-Then I found it! The flag was captioned below the image
+Anddd I found it! The flag was captioned below the image
 
 ![Texas Chicken midvalley](/assets/images/wargames-my-2022/whereami2.png)
 
 ### Who Am I
 
-
-
 > Find me. (Is this the real life? Is this just fantasy?)
 
 ![whoami.png](/assets/images/wargames-my-2022/whoami.png)
 
-
 #### Solution
 
-This seems like a registration page, but the registration on the main website have already closed. 
+This seems like a registration page, but the registration on the main website had already closed. 
 
-Again like the previous question, since all the flags are in `wgmy{}` format and we are not required to add the flag format ourselves.
+Again, all the flags are in `wgmy{}` format and we are not required to add the flag format ourselves.
 
 The best place to put the flag will be on social media.
 
@@ -190,16 +189,15 @@ So I looked through the [facebook page](https://www.facebook.com/wargames.my/) o
 
 ![whoami2.jpg](/assets/images/wargames-my-2022/whoami2.jpg)
 
-Although there are no comments related to flag on the post, the image contains weird symbol on the side.
+Although there are no comments related to the flag on the post, the image contains weird symbols on the side.
 
-I looked at it in detail and guess that it was just wingdings. (and it really was XD)
+I looked at it closely and guess that it was wingdings. (and it really was XD)
 
 With some manual work of decoding it, I then got the flag.
 
 ## Web
 
 ### Christmas Wishlist
-
 
 
 > Submit your wishlist at this website!
@@ -220,59 +218,59 @@ app.config['UPLOAD_FOLDER'] = f'{app_dir}/upload/'
 
 @app.route('/', methods=['GET','POST'])
 def index():
-	try:
-		if request.method == 'GET':
-			return render_template('index.html')
+    try:
+        if request.method == 'GET':
+            return render_template('index.html')
 
-		elif request.method == 'POST':
-			f = request.files['file']
-			filepath = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+        elif request.method == 'POST':
+            f = request.files['file']
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
 
-			if os.path.exists(filepath) or ".." in filepath:
-				return render_template_string("Hohoho.. No present for you")
+            if os.path.exists(filepath) or ".." in filepath:
+                return render_template_string("Hohoho.. No present for you")
 
-			else:
-				f.save(filepath)
-				output = subprocess.check_output(
-					["/bin/file",'-b', filepath], 
-					shell=False, 
-					encoding='utf-8',
-					timeout=1
-				)
-				
-				if "ASCII text" not in output:
-					output=f"<p style='color:red'>Error: The file is not a text file: {output}</p>"
-				else:
-					output = "You wish for "
-					with open(filepath,'r') as f:
-						lines = f.readlines()
-						output += ', '.join(lines[:-1]) + " and " + lines[-1]
+            else:
+                f.save(filepath)
+                output = subprocess.check_output(
+                    ["/bin/file",'-b', filepath], 
+                    shell=False, 
+                    encoding='utf-8',
+                    timeout=1
+                )
+                
+                if "ASCII text" not in output:
+                    output=f"<p style='color:red'>Error: The file is not a text file: {output}</p>"
+                else:
+                    output = "You wish for "
+                    with open(filepath,'r') as f:
+                        lines = f.readlines()
+                        output += ', '.join(lines[:-1]) + " and " + lines[-1]
 
-				os.remove(filepath)
-				return render_template_string(output)
+                os.remove(filepath)
+                return render_template_string(output)
 
-	except:
-		return render_template_string("Error")
+    except:
+        return render_template_string("Error")
 
 if __name__ == '__main__':
-	serve(app, host="0.0.0.0", port=3000, threads=1000, cleanup_interval=30)
+    serve(app, host="0.0.0.0", port=3000, threads=1000, cleanup_interval=30)
 ```
 
 </div>
 
 #### Observation
 
-This is a flask app the provide an endpoint to upload file. 
+This is a flask app that provides an endpoint to upload a file. 
 
-On every upload the command `/bin/file -b <filepath>` will be runned.
+On every upload, the command `/bin/file -b <filepath>` will be run.
 
 The server will then read the uploaded file and pass the content to the jinja template.
 
 #### Solution
 
-I am really bad at web and have no idea where to start. I thought of command injection but that is prevented by `shell=False` 
+I am really bad at web challenges and have no idea where to start. I thought of command injection but that is prevented by `shell=False` 
 
-I was stucked here for few hours until I found a [writeup](https://fireshellsecurity.team/rctf2022-easyupload-filechecker-ezbypass/#filechecker-mini) online that looks very similar to this question. Then only I know about template injection.
+I was stuck here for a few hours until I found a [writeup](https://fireshellsecurity.team/rctf2022-easyupload-filechecker-ezbypass/#filechecker-mini) online that looks very similar to this question. Then only I know about template injection.
 
 The gist of the solution is we provide `{{something...}}` and the jinja template will run the command in the bracket. I just copied the payload from the writeup and got the solution
 
@@ -303,39 +301,39 @@ app.config['UPLOAD_FOLDER'] = f'{app_dir}/upload/'
 
 @app.route('/', methods=['GET','POST'])
 def index():
-	try:
-		if request.method == 'GET':
-			return render_template('index.html')
+    try:
+        if request.method == 'GET':
+            return render_template('index.html')
 
-		elif request.method == 'POST':
-			f = request.files['file']
-			filepath = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
+        elif request.method == 'POST':
+            f = request.files['file']
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], f.filename)
 
-			if os.path.exists(filepath) or ".." in filepath:
-				return render_template_string("Hohoho.. No present for you")
-			
-			else:
-				f.save(filepath)
-				output = subprocess.check_output(
-					["/bin/file",'-b', filepath], 
-					shell=False, 
-					encoding='utf-8',
-					timeout=1
-				)
-				
-				if "ASCII text" not in output:
-					output=f"<p style='color:red'>Error: The file is not a text file: {output}</p>"
-				else:
-					output="Wishlist received. Santa will check out soon!"
+            if os.path.exists(filepath) or ".." in filepath:
+                return render_template_string("Hohoho.. No present for you")
+            
+            else:
+                f.save(filepath)
+                output = subprocess.check_output(
+                    ["/bin/file",'-b', filepath], 
+                    shell=False, 
+                    encoding='utf-8',
+                    timeout=1
+                )
+                
+                if "ASCII text" not in output:
+                    output=f"<p style='color:red'>Error: The file is not a text file: {output}</p>"
+                else:
+                    output="Wishlist received. Santa will check out soon!"
 
-				os.remove(filepath)
-				return render_template_string(output)
+                os.remove(filepath)
+                return render_template_string(output)
 
-	except:
-		return render_template_string("Error")
+    except:
+        return render_template_string("Error")
 
 if __name__ == '__main__':
-	serve(app, host="0.0.0.0", port=3000, threads=1000, cleanup_interval=30)
+    serve(app, host="0.0.0.0", port=3000, threads=1000, cleanup_interval=30)
 ```
 </div>
 
@@ -347,9 +345,9 @@ Also, only the file command output will be added when `ASCII text` is not in the
 
 #### Solution
 
-The writeup I found in v1.0 already accounted for this scenario, basically you can put the template in the shebang of the file so that the file command will output it.
+The writeup I found in v1.0 already accounted for this scenario, basically, you can put the template in the shebang of the file so that the file command will output it.
 
-To make sure that it does not contains the word `ASCII text`, just add a unicode character like emoji or characters from other language in the file body.
+To make sure that it does not contains the word `ASCII text`, just add a Unicode character like an emoji or characters from another language in the file body.
 
 Final payload (filename doesn't matter)
 
@@ -364,23 +362,19 @@ File content
 
 ### Color
 
-
-
 > Please message us on discord if you are colorblind (Because I'm easy come, easy go, Little high, little low,)
 
 <img src="/assets/images/wargames-my-2022/color.png" alt="color.png" style="width:300px;"/>
 
 #### Solution
 
-We get a qr code with multiple colors. I guessed that each color will represent one part of the flag
+We get a QR code with multiple colours. I guessed that each colour will represent one part of the flag
 
-So I used [stegonline](https://stegonline.georgeom.net/upload) to filter out the 3 different colors and scan each of the qr separately.
+So I used [stegonline](https://stegonline.georgeom.net/upload) to filter out the 3 different colours and scan each of the QR separately.
 
-And the qr codes indeed represented one part of the flag! Combine them and solve the question
+And the QR codes indeed represented one part of the flag! Combine them and solve the question
 
 ### Puzzle
-
-
 
 > Is the original always better?
 > Maybe, should we check? (I'm just a poor boy, I need no sympathy,)
@@ -389,7 +383,7 @@ And the qr codes indeed represented one part of the flag! Combine them and solve
 
 #### Observation
 
-Look at the top part of the image carefully and we can see pieces of qr code. 
+Look at the top part of the image carefully and we can see pieces of QR code. 
 
 The organizer also provided the [original image](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg) as the hint.
 
@@ -399,9 +393,9 @@ I load two images into python and observe the difference between each pixel.
 
 I first create a new image.
 
-For each of the pixel, if both are the same then set the pixel to be white.
+For each of the pixels, if both are the same then set the pixel to white.
 
-If the maximum of `(Puzzle pixel - Original pixel)` for each of the color (r,g,b) is negative, then I set the pixel to full black.
+If the maximum of `(Puzzle pixel - Original pixel)` for each of the colors (r,g,b) is negative, then I set the pixel to full black.
 
 Else I set it to blue
 
@@ -436,7 +430,7 @@ This is what I get in the end
 
 !["puzzle.jpeg"](/assets/images/wargames-my-2022/puzzle.jpeg)
 
-Rearranging the pieces with photoshop (manual labor),
+Rearranging the pieces with photoshop (manual labour),
 
 !["puzzle2.jpeg"](/assets/images/wargames-my-2022/puzzle2.jpeg)
 
@@ -447,7 +441,6 @@ Tada! I got flag by scanning the QR
 ### Sanity Check (TryHackMe)
 
 
-
 > Please use the link below to learn how to use TryHackMe platform. Submit the root flag located in /root/root.txt
 
 #### Solution
@@ -456,21 +449,19 @@ Trivial, just cat the file for the flag
 
 ### D00raemon (User)
 
-
-
 > User flag located in /home//user.txt
 
 #### Solution
 
-First I did a port scan the provided ip, 2 ports are open port 22 (ssh) and port 80 (http)
+First I did a port scan of the provided IP, 2 ports are open port 22 (ssh) and port 80 (http)
 
-The port 80 was nothing but just a default page for apache.
+Port 80 was nothing but just a default page for apache.
 
 ![d00raemon1.png](/assets/images/wargames-my-2022/d00raemon1.png)
 
-I then did a directory bruteforce on the ip and found that `/wordpress` was online.
+I then did a directory brute force on the IP and found that `/wordpress` was online.
 
-Continue my directory bruteforce on `/wordpress`, I found `/wordpress/wp-content/uploads/`
+Continue my directory brute force on `/wordpress`, I found `/wordpress/wp-content/uploads/`
 
 ![d00raemon2.png](/assets/images/wargames-my-2022/d00raemon2.png)
 
@@ -493,7 +484,7 @@ ssh to the user account and cat the file for the flag.
 
 #### Solution
 
-Now that I got ssh access to the user account, I want to esclate our privilleage to read `/root/root.txt`
+Now that I got ssh access to the user account, I want to escalate our privilege to read `/root/root.txt`
 
 First, let's check what command this user can run with `sudo -l`
 
@@ -506,11 +497,11 @@ This is interesting, I can use the command
 ```
 as any user without a password
 
-csvtool is a powerful commandline tool that can read/write to a file
+csvtool is a powerful command line tool that can read/write to a file
 
 I can add any character I want to the command because of the `*` wildcard, just that the prefix and suffix must be the same.
 
-Here, the organizers have hinted a lot that we need bypass the `--help` flag
+Here, the organizers have hinted a lot that we need to bypass the `--help` flag
 
 So to do this, I just add `-o` flag just before `--help` flag. Then `--help` will then be regarded as the output file.
 
@@ -540,56 +531,56 @@ import os
 from secret import flag
 
 try:
-	print("Welcome to the HMAC master challenge!")
-	print("Answer all 3 questions to get the flag!\n")
+    print("Welcome to the HMAC master challenge!")
+    print("Answer all 3 questions to get the flag!\n")
 
-	print("Now give me two different messages that have the same MD5 hash!")
-	a = input("Message A: ")
-	b = input("Message B: ")
-	if a == b:
-		print("Both message cannot be the same! Aborting..")
-		exit()
-	elif hashlib.md5(bytes.fromhex(a)).hexdigest() != hashlib.md5(bytes.fromhex(b)).hexdigest():
-		print("Oops.. See you next time!")
-		exit()
-	print("You solved the first question!\n")
+    print("Now give me two different messages that have the same MD5 hash!")
+    a = input("Message A: ")
+    b = input("Message B: ")
+    if a == b:
+        print("Both message cannot be the same! Aborting..")
+        exit()
+    elif hashlib.md5(bytes.fromhex(a)).hexdigest() != hashlib.md5(bytes.fromhex(b)).hexdigest():
+        print("Oops.. See you next time!")
+        exit()
+    print("You solved the first question!\n")
 
-	print("Now the second question")
-	print("Give me a message, then I will give the MD5 hash after I preappend a secret key")
-	print("Next you need to give me another message and the corresponding hash after preappended the secret key")
-	KEY = os.urandom(8)
-	a = input("Message A: ")
-	h = hashlib.md5(KEY+bytes.fromhex(a)).hexdigest()
-	print(f"MD5(KEY+A): {h}")
-	b = input("Message B: ")
-	h2 = hashlib.md5(KEY+bytes.fromhex(b)).hexdigest()
-	if a == b: 
-		print("Both messages cannot be the same! Aborting..")
-		exit()
-	elif input("MD5(KEY+B): ") != h2:
-		print("Oops.. See you next time!")
-		exit()
-	print("Good Job!\n")
+    print("Now the second question")
+    print("Give me a message, then I will give the MD5 hash after I preappend a secret key")
+    print("Next you need to give me another message and the corresponding hash after preappended the secret key")
+    KEY = os.urandom(8)
+    a = input("Message A: ")
+    h = hashlib.md5(KEY+bytes.fromhex(a)).hexdigest()
+    print(f"MD5(KEY+A): {h}")
+    b = input("Message B: ")
+    h2 = hashlib.md5(KEY+bytes.fromhex(b)).hexdigest()
+    if a == b: 
+        print("Both messages cannot be the same! Aborting..")
+        exit()
+    elif input("MD5(KEY+B): ") != h2:
+        print("Oops.. See you next time!")
+        exit()
+    print("Good Job!\n")
 
-	print("Now the final question, is the another way around")
-	print("Give me a message, then I will give the MD5 hash after I append a secret key behind")
-	print("Next you need to give me another message and the corresponding hash after appended the secret key")
+    print("Now the final question, is the another way around")
+    print("Give me a message, then I will give the MD5 hash after I append a secret key behind")
+    print("Next you need to give me another message and the corresponding hash after appended the secret key")
 
-	KEY = os.urandom(8)
-	a = input("Message A: ")
-	h = hashlib.md5(bytes.fromhex(a)+KEY).hexdigest()
-	print(f"MD5(A+KEY): {h}")
-	b = input("Message B: ")
-	h2 = hashlib.md5(bytes.fromhex(b)+KEY).hexdigest()
-	if a == b:
-		print("Both message cannot be the same! Aborting..")
-		exit()
-	elif input("MD5(B+KEY): ") != h2:
-		print("Oops.. See you next time!")
-		exit()
-	print(f"Congrats HMAC master!! Here is your flag: {flag}")
+    KEY = os.urandom(8)
+    a = input("Message A: ")
+    h = hashlib.md5(bytes.fromhex(a)+KEY).hexdigest()
+    print(f"MD5(A+KEY): {h}")
+    b = input("Message B: ")
+    h2 = hashlib.md5(bytes.fromhex(b)+KEY).hexdigest()
+    if a == b:
+        print("Both message cannot be the same! Aborting..")
+        exit()
+    elif input("MD5(B+KEY): ") != h2:
+        print("Oops.. See you next time!")
+        exit()
+    print(f"Congrats HMAC master!! Here is your flag: {flag}")
 except Exception as e:
-	print("HACKER ALERT!! Aborting..")
+    print("HACKER ALERT!! Aborting..")
 ```
 
 </div>
@@ -599,18 +590,18 @@ except Exception as e:
 For this HMAC question, we have 3 parts to solve.
 
 1. Provide 2 different messages with the same signature
-2. Given a siganature of a chosen message prepended with a secret, provide a different message and the siganature when is prepended with the same secret
-3. Given a siganature of a chosen message appended with a secret, provide a different message and the siganature when is appended with the same secret
+2. Given a signature of a chosen message prepended with a secret, provide a different message and the signature when is prepended with the same secret
+3. Given a signature of a chosen message appended with a secret, provide a different message and the signature when is appended with the same secret
 
 #### Solution
 
-1. MD5 is known as a weak hash because collisions has been found for the hash algorithm. To solve this question, go to this [website](https://www.mathstat.dal.ca/~selinger/md5collision/) and take the 2 messages
+1. MD5 is known as a weak hash because collisions have been found for the hash algorithm. To solve this question, go to this [website](https://www.mathstat.dal.ca/~selinger/md5collision/) and take the 2 messages
 2. MD5 is vulnerable to length extension attack because it is an [Merkle–Damgård hash function](https://en.wikipedia.org/wiki/Merkle%E2%80%93Damg%C3%A5rd_construction). To solve this question, use [hash_extender](https://github.com/iagox86/hash_extender) to construct the second message and the signature
 3. This is more interesting compared to the previous 2.
    
 Again, since MD5 is an [Merkle–Damgård hash function](https://en.wikipedia.org/wiki/Merkle%E2%80%93Damg%C3%A5rd_construction), the hash is basically done block by block. (similar to AES-CBC)
 
-Each block is of a size of 512 bit. If the message is less than the length, it will then be padded to a certain length before hashing. 
+Each block is of a size of 512 bits. If the message is less than the length, it will then be padded to a certain length before hashing. 
 
 So to solve this question, we can first take the 2 messages we got from the first question, and add padding to both of them. (same as how would md5 algorithm do it)
 
@@ -620,9 +611,9 @@ The padding looks something like this
 08000....004000000000000
 ```
 
-Now these 2 messages will be 512 bit, which fit in as the first block. 
+Now, these 2 messages will be 512 bits, which fits in as the first block. 
 
-From part 1, we know the hash in the first block of both messages are the same. Since the second block has the same message (the appended key), the final hash will be equal
+From part 1, we know the hash in the first block of both messages is the same. Since the second block has the same message (the appended key), the final hash will be equal
 
 Final input for part 3
 ```
@@ -651,36 +642,36 @@ msg = b"gimmetheflag"
 
 print("Welcome to our E-Signature Service!")
 while True:
-	print("Choose an option")
-	print("1. Sign message")
-	print("2. Get flag")
-	print("3. Show Public Key")
-	print("4. Exit")
-	option = input("Enter option: ")
-	try:
-		if option == '1':
-			m = int(input("Enter message to sign: "),16)
-			if bytes_to_long(msg) == m:
-				print("Nope hacker hehe")
-				break
-			s = pow(m,d,n)
-			print(f"Signature: {hex(s)[2:]}\n")
-		elif option == '2':
-			s = int(input("Give me the signature of the message 'gimmetheflag': "),16)
-			if bytes_to_long(msg) == pow(s,e,n):
-				print(f"Signature matches! Here's your flag: {flag}\n")
-			else:
-				print("Wrong signature!!\n")
-		elif option == '3':
-			print(f"n={n}")
-			print(f"e={e}\n")
-		elif option == '4':
-			break
-		else:
-			print("Invalid option!\n")
-	except:
-		print("Nope hacker hehe")
-		break
+    print("Choose an option")
+    print("1. Sign message")
+    print("2. Get flag")
+    print("3. Show Public Key")
+    print("4. Exit")
+    option = input("Enter option: ")
+    try:
+        if option == '1':
+            m = int(input("Enter message to sign: "),16)
+            if bytes_to_long(msg) == m:
+                print("Nope hacker hehe")
+                break
+            s = pow(m,d,n)
+            print(f"Signature: {hex(s)[2:]}\n")
+        elif option == '2':
+            s = int(input("Give me the signature of the message 'gimmetheflag': "),16)
+            if bytes_to_long(msg) == pow(s,e,n):
+                print(f"Signature matches! Here's your flag: {flag}\n")
+            else:
+                print("Wrong signature!!\n")
+        elif option == '3':
+            print(f"n={n}")
+            print(f"e={e}\n")
+        elif option == '4':
+            break
+        else:
+            print("Invalid option!\n")
+    except:
+        print("Nope hacker hehe")
+        break
 ```
 </div>
 
@@ -688,7 +679,7 @@ while True:
 
 The goal of this challenge is to obtain the signature of `gimmetheflag`
 
-Here we are given a signature oracle that will sign any message user provide as long as it is not the target message.
+Here we are given a signature oracle that will sign any message user provides as long as it is not the target message.
 
 #### Solution
 
@@ -700,7 +691,7 @@ To solve this question,
 
 1. Send $$2 \cdot m \mod(n)$$ to the oracle to obtain $$(2m)^d \mod(n)$$
 2. Send $$2^{-1} \mod(n)$$ to the oracle to obtain $$2^{-d} \mod(n)$$
-3. Multiple both answers
+3. Multiply both answers
 
 $$(2m)^d \cdot 2^{-d} \equiv m^d \mod(n)$$
 
@@ -766,17 +757,17 @@ P6z0852lAkEA5zyeIqW0dBjZW/fRP3+ZhZ6BojWU40DCQygcZXk2vcGB????????
 
 #### Observation
 
-We are given a partial (PKCS#1) private rsa key in ASN.1 PEM.
+We are given a partial (PKCS#1) private RSA key in ASN.1 PEM.
 
 Our goal is to obtain the $$p$$ and $$q$$ to connect the server
 
 #### Solution
 
-Previously I have been using the ASN.1 convertor as a black box, but for this question I will have to deep dive in the structure of ASN.1.
+Previously I have been using the ASN.1 convertor as a black box, but for this question, I will have to deep dive into the structure of ASN.1.
 
 In short, it uses the [Type–length–value](https://en.wikipedia.org/wiki/Type%E2%80%93length%E2%80%93value) encoding scheme.
 
-First part of the data will be the type, follow by length and value.
+The first part of the data will be the type, followed by length and value.
 
 You can learn more about it [here](https://coolaj86.com/articles/asn1-for-dummies/)
 
@@ -803,13 +794,13 @@ By converting the first known part of the key from base64 to hex,
 
 ![corrupted.png](../../assets/images/wargames-my-2022/corrupted.png)
 
-Here we filter for the byte `0x02` because that stands for the type for integer.
+Here we filter for the byte `0x02` because that stands for the type of integer.
 
 Observe the part with `02 81 81 01`
 
 This is the starting of the modulus $$n$$. The length of $$n$$ is 0x81 bytes which is 1032 bits. This means that the $$n$$ we have is most likely 1024 bit (the first hex byte of n is 01)
 
-Also, there is also a part that shows `02 03 01 00 01`
+There is also a part that shows `02 03 01 00 01`
 
 This correspond to our exponent $$e$$, which is `0x100001`
 
@@ -821,15 +812,15 @@ Note: Before we convert from base64 to hex, we must make sure that the
 
 starting character position $$\times\ 6 \mod 8 = 0$$
 
-This is because each base64 character correspond to 6 bits, the formulation is to make sure that the hex is correctly alligned
+This is because each base64 character corresponds to 6 bits, the formulation is to make sure that the hex is correctly aligned
 
 So we start from `e3iK5R...` instead of `Xe3iK5R...`
 
 ![corrupted2.png](../../assets/images/wargames-my-2022/corrupted2.png)
 
-Observe the part `02 41 00`. 
+Observe part `02 41 00`. 
 
-We don't know whether the value before this was private exponent or another prime, but we can be certain that the part after this will be one of the prime. This is because the byte length is 0x41, which is `512` bit :)
+We don't know whether the value before this was a private exponent or another prime, but we can be certain that the part after this will be one of the primes. This is because the byte length is 0x41, which is `512` bit :)
 
 So now we know the higher bits of a prime `p`, we know the modulus `n` and the exponent `e`. 
 
@@ -858,7 +849,7 @@ q = n // int(p)
 print(p, q)
 ```
 
-The part to generate private key and ssh to the target is easy after finding the primes.
+The part to generate a private key and ssh to the target is easy after finding the primes.
 
 Connect to the server and cat the flag!
 
