@@ -272,7 +272,7 @@ I am really bad at web challenges and have no idea where to start. I thought of 
 
 I was stuck here for a few hours until I found a [writeup](https://fireshellsecurity.team/rctf2022-easyupload-filechecker-ezbypass/#filechecker-mini) online that looks very similar to this question. Then only I know about template injection.
 
-The gist of the solution is we provide `{{something...}}` and the jinja template will run the command in the bracket. I just copied the payload from the writeup and got the solution
+The gist of the solution is we provide `{% raw %}{{something...}}{% endraw %}` and the jinja template will run the command in the bracket. I just copied the payload from the writeup and got the solution
 
 Final payload (filename doesn't matter)
 
