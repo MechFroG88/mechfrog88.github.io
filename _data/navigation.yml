@@ -2,6 +2,8 @@
 main:
   - title: "Write-ups"
     url: /write-ups
+  - title: "Notes"
+    url: /notes
 
 docs:
   - title: Wargames My 2022
