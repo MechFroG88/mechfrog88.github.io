@@ -52,7 +52,7 @@ For this challenge, we are given a server endpoint that will take in user input 
 
 The payload, however, must not contain any lowercase or uppercase letter or string literal
 
-The goal of this challenge is to write the flag from the server
+The goal of this challenge is to read the flag from the server
 
 #### Solution
 
