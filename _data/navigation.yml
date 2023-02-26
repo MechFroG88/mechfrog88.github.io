@@ -6,6 +6,21 @@ main:
     url: /notes
 
 docs:
+  - title: ACSC 2022
+    children:
+      - title: "Severless"
+        url: /acsc-2022#serverless
+      - title: "Merkle Hellman"
+        url: /acsc-2022#merkle-hellman
+      - title: "Check Number 63"
+        url: /acsc-2022#check-number-63
+      - title: "DSA"
+        url: /acsc-2022#dsa
+      - title: "Corrupted"
+        url: /acsc-2022#corrupted
+      - title: "SusCipher"
+        url: /acsc-2022#suscipher
+
   - title: Wargames My 2022
     children:
       - title: Misc
