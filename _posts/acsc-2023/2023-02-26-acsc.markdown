@@ -1,9 +1,9 @@
 ---
 layout: single
-title:  "ACSC 2022"
-date:   2022-02-26 12:00:00 +0800
-categories: acsc-2022
-permalink: /acsc-2022
+title:  "ACSC 2023"
+date:   2023-02-26 12:00:00 +0800
+categories: acsc-2023
+permalink: /acsc-2023
 ---
 
 Writeup for the challenges I solved in ACSC. I mainly focused on Crypto challenges.
@@ -1339,4 +1339,4 @@ r.sendline(str(blockToInt(cipher._xor(c, p1))))
 r.interactive()
 ```
 
-flag: ``
+flag: `ACSC{There_may_be_a_better_solution_to_solve_this_but_I_used_diff_analysis_:(}`
