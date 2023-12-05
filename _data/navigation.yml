@@ -6,6 +6,19 @@ main:
     url: /notes
 
 docs:
+  - title: ABOH 2023
+    children:
+      - title: "Small Sage"
+        url: /aboh-2023#small-sage
+      - title: "May The Force Be With You"
+        url: /aboh-2023#may-the-force-be-with-you
+      - title: "Substitute"
+        url: /aboh-2023#substitute
+      - title: "Substitute-v2"
+        url: /aboh-2023#substitute-v2
+      - title: "Hash Clash"
+        url: /aboh-2023#hash-clash
+
   - title: ACSC 2023
     children:
       - title: "Severless"

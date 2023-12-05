@@ -1,0 +1,889 @@
+---
+layout: single
+title:  "ABOH 2023"
+date:   2023-12-05 12:00:00 +0800
+categories: aboh-2023
+permalink: /aboh-2023
+---
+
+Writeup for all the crypto challenges I solved in Apu Battle of Hackers 2023 (ASEAN Category).
+
+I will try to make my writeup easy to follow ;D
+
+### About SageMath
+
+Most of the crypto challenges have `.sage` file, which is a [SageMath](https://www.sagemath.org/) code file. 
+
+`Sagemath` is a library built on top of `Python`, there are some slight syntax difference, which I have summarized [here](/notes/sagemath-guide/).
+
+## Small Sage
+
+> I only know how to do smith challenges
+
+
+```python
+#!/usr/bin/env sage
+from Crypto.Util.number import bytes_to_long
+
+p, q = random_prime(2 ^ 1024), random_prime(2 ^ 1024)
+n = p*q
+e = 3
+
+assert len(flag) > e
+
+FLAG = open("flag.txt", "rb").read().strip()
+m = bytes_to_long(FLAG + b' is your challenge flag.')
+c = pow(m, e, n)
+
+print("N: ", n)
+print("C: ", c)
+print("e: ", e)
+```
+
+### Observation
+
+Reading the given code, we see that this is an RSA implementation with small `e = 3`.
+
+When the exponent of RSA is small, it is vulnerable to [Coppersmith Attack](https://en.wikipedia.org/wiki/Coppersmith%27s_attack)
+
+I know you won't read all the math in the wikipedia page so I will summarize the idea of Coppersmith Attack here. 
+
+The general idea of the attack is it enable us to find root of an equation modulo $$N$$, namely
+
+$$
+f(x) \equiv 0 \text{ (mod } N)
+$$
+
+where $$f(x)$$ is a polynomial function in terms of $$x$$
+
+In the case of RSA, we are trying to solve
+
+$$
+\begin{aligned}
+    m^e &\equiv c \text{ (mod } N)\\
+    m^e - c &\equiv 0 \text{ (mod } N)\\
+    f(m) &\equiv 0 \text{ (mod } N)\\
+\end{aligned}
+$$
+
+where $$m$$ is the plaintext and $$c$$ is the ciphertext.
+
+But then if coppersmith attack works, wouldn't we can just break any RSA cryptosystem? Just find the root and we are done right!
+
+Hohoho smart kid, but that is not the case because of Coppersmith Theorem. Coppersmith attack only works under certain condition
+
+#### Coppersmith Theorem
+
+Note: this is a summarized version
+
+Let $$N$$ be the modulus
+
+Let $$d$$ be the degree of the polynomial $$f(x)$$ 
+
+Let $$\alpha$$ be a root of the polynomial $$f(x)$$ 
+
+Given the condition 
+
+$$\alpha < N^{\frac{1}{d} - \epsilon}$$
+
+then we can efficiently find $$\alpha$$ for some small $$\epsilon$$.
+
+The $$\epsilon$$ you choose will affect the runtime of your algorithm. The smaller the $$\epsilon$$, the longer it takes to run.
+
+### Solution
+
+In this problem, our $$f(m)$$ is 
+
+$$f(m) = m^e - c = m^3 - c$$
+
+Therefore the degree of the polynomial is $$e = 3$$, and the coppersmith bound is
+
+$$\alpha < N^{\frac{1}{3} - \epsilon} \approx 2^{2048/3} = 2^{682}$$
+
+This means that if our plaintext $$m$$ is less than $$2^{682}$$, we should be able to recover it.
+
+$$2^{682}$$ is about 85 characters, which should be sufficiently long enough for a flag.
+
+Next we need to form the equation to run the attack. Note that in the original question, the flag is prepended with bunch of text before 
+ encryption. 
+
+```python
+m = bytes_to_long(FLAG + b' is your challenge flag.')
+```
+
+With that in mind, the polynomial should be
+
+$$
+m * 256^{l} + k \equiv 0 \text{ (mod } N)
+$$
+
+where 
+
+```python
+padding = b' is your challenge flag.'
+l = len(padding)
+k = bytes_to_long(padding))
+```
+
+Now throw this into SageMath built in coppersmith method `small_roots()`, then we get the flag
+
+Solution script
+
+``` python
+from Crypto.Util.number import bytes_to_long, long_to_bytes
+
+n = ...
+c = ...
+e = 3
+
+padding = b' is your challenge flag.'
+F.<x> = Zmod(n)[]
+f = c - (x * 256^len(padding) + bytes_to_long(padding))^3
+f = f.monic() 
+flag = int(f.small_roots()[0])
+
+print(long_to_bytes(flag))
+```
+
+Note the line
+```python
+...
+f = f.monic()
+...
+```
+
+Convert to a monic polynomial basically means divide the polynomial with the coefficient of the highest degree,
+
+For example
+
+$$5x^3 + 3x + 1 = 0$$
+
+will change to
+
+$$x^3 + \dfrac{3}{5}x + \dfrac{1}{5} = 0$$
+
+This is necessary because sagemath `small_roots()` only works on monic polynomial. Note that monic polynomial should have the same roots as the original polynomial.
+
+## May The Force Be With You
+
+> One in a galaxy far far away a there was a story about the famous sith lord who managed to conqure the entire galaxy by just using the force. He encoded a secret message with is god like powers and now it's up to u to try and decode it. Can u take over the galaxy? Decrypt the message to gain all the powers from the darkside.
+
+```python
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Random import get_random_bytes
+from Crypto.Protocol.KDF import PBKDF2
+
+import textwrap
+
+def encrypt_file(file_path, password):
+    with open(file_path, 'rb') as file:
+        plaintext = file.read()
+
+
+    iv = get_random_bytes(AES.block_size)
+
+    passwd = textwrap.dedent(password)[:-1]
+
+
+    salt = b'salt123'  
+    key = PBKDF2(passwd.encode(), salt, dkLen=16)
+
+
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+
+
+    ciphertext = cipher.encrypt(pad(plaintext, AES.block_size))
+
+
+    encrypted_file_path = file_path + '.enc'
+    with open(encrypted_file_path, 'wb') as file:
+        file.write(ciphertext + iv)
+
+    print("Encryption successful. Encrypted file saved as:", encrypted_file_path)
+
+
+password = "ni5h2h?Yrq8Do?n+|6a;pKbZkv%}O~tV" 
+file_path = "./flag.txt"   
+encrypt_file(file_path, password)
+
+```
+
+### Solution
+
+AES encryption is used to encrypt the flag file. The key is generated from the password and we are given the password. So just run AES decryption to get the flag.
+
+```python
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+from Crypto.Random import get_random_bytes
+from Crypto.Protocol.KDF import PBKDF2
+
+import textwrap
+
+password = "ni5h2h?Yrq8Do?n+|6a;pKbZkv%}O~tV" 
+passwd = textwrap.dedent(password)[:-1]
+salt = b'salt123'  
+key = PBKDF2(passwd.encode(), salt, dkLen=16)
+
+f = open("flag.txt.enc", "rb").read()
+iv = f[-16:]
+
+cipher = AES.new(key, AES.MODE_CBC, iv)
+ciphertext = cipher.decrypt(f[:-16])
+print(ciphertext)
+```
+
+## Substitute
+
+> No idea what to do so I do substitution, but RNA encode
+
+<button class="collapsible btn" id="substitute">substitute.sage</button>
+
+<div class="content" id="substitutedata" style="display:none" markdown="1">
+
+```python
+#!/usr/bin/env sage
+import string, base64, math
+
+flag = open('../flag.txt', 'rb').read()
+
+SET = string.printable[:62] + '\\='
+
+R = list(GF(64))
+
+def keygen(l):
+    key = [R[randint(1, 63)] for _ in range(l)] 
+    key = math.prod(key) # Optimization the key length :D
+    return key
+
+def substitute(c):
+    assert c in SET
+    return R[SET.index(c)]
+
+def encrypt(msg, key):
+    m64 = base64.b64encode(msg)
+    enc, pkey = '', key**1337
+    for m in m64:
+        enc += SET[R.index(pkey * substitute(chr(m)))]
+    return enc
+
+def rnaencode(msg):
+    binstr = ''.join(format(byte, '08b') for byte in msg.encode())
+    print(binstr)
+    rna = []
+    for i in range(0, len(binstr), 2):
+        if binstr[i:i+2] == "00":
+            rna.append("A")
+        elif binstr[i:i+2] == "01":
+            rna.append("C")
+        elif binstr[i:i+2] == "10":
+            rna.append("G")
+        elif binstr[i:i+2] == "11":
+            rna.append("U")
+    return ''.join(rna)
+
+key = keygen(16)
+print(key)
+
+enc = encrypt(flag, key)
+
+with open('out.txt', 'w') as f:
+    f.write(rnaencode(enc))
+```
+
+</div>
+
+### Observation
+
+The code looks complicated.
+
+First we see that `rnaencode()` basically just encode bits to `AGCU`, use github copilot to generate the decode function.
+
+```python
+def rnadecode(msg):
+    binstr = []
+    for i in msg:
+        if i == "A":
+            binstr.append("00")
+        elif i == "C":
+            binstr.append("01")
+        elif i == "G":
+            binstr.append("10")
+        elif i == "U":
+            binstr.append("11")
+    binstr = ''.join(binstr)
+    msg = []
+    for i in range(_sage_const_0 , len(binstr), _sage_const_8 ):
+        msg.append(chr(int(binstr[i:i+_sage_const_8 ], _sage_const_2 )))
+    return ''.join(msg)
+```
+
+Next we have to break the subsitution cipher.
+
+The key is generated from this function
+
+```python
+R = list(GF(64))
+
+def keygen(l):
+    key = [R[randint(1, 63)] for _ in range(l)] 
+    key = math.prod(key) # Optimization the key length :D
+    return key
+```
+
+The keygen is simple, it is a multiplication of random elements in `R = list(GF(64))`
+
+But what is `GF(64)` !???? 💀
+
+#### Galois Field
+
+Dont worry bro, I die in my university math classes so that I can explain this to you.
+
+`GF` stands for Galois Field, which basically just means a field.
+
+A field in abstract algebra is a structure which we can do the operations `+-*/` and is closed within.
+
+For example, The Rational Number $$\mathbb{Q}$$ is a field.
+
+We can do addition, negation, multiplication and division in $$\mathbb{Q}$$
+
+A counterexample, The Integers $$\mathbb{Z}$$ is not a field.
+
+Why so? Let's take two numbers 5, 2
+
+Can we divide 5 and 2?
+
+The answer is we can't, 5 divide 2 is not an integer, it has now become a rational number.
+
+The condition of a field is after doing all the arithmetic operations, we are still contained in the original set of elements. We call this the closure property
+
+Now let's considor another field $$\mathbb{Z}_7$$ (Integer modulo 7)
+
+You will find out that we can do division of 5 and 2 here because 
+
+$$2 \cdot 4 \equiv 1  \text{ (mod } N)$$
+
+So we can say 
+
+$$\dfrac{1}{2} \equiv 2^{-1} \equiv 4 \text{ (mod } N)$$
+
+Therefore to do 5 divide 2,
+
+$$\dfrac{5}{2} \equiv 5 \cdot 2^{-1} \equiv 5 \cdot 4 \equiv 6  \text{ (mod } N)$$
+
+You can check that it is indeed a field.
+
+So now we back to our original question, $$GF(64)$$ basically means a field that has 64 elements
+
+A basic property of a finite field is that the number of elements must be a prime power $$p^k$$. 
+
+In this case $$GF(64) = GF(2^6)$$
+
+When $$k > 1$$, we have to do field extension (????💀) on the prime integer field to construct it. (Not necessary have to know to solve this challenge)
+
+So when we run `list(GF(64))`, this is what you will see in sage
+
+```python
+sage: list(GF(64))
+[0,  z6,  z6^2,  z6^3,  z6^4,  z6^5,  z6^4 + z6^3 + z6 + 1,  z6^5 + z6^4 + z6^2 + z6,  z6^5 + z6^4 + z6^2 + z6 + 1,  z6^5 + z6^4 + z6^2 + 1,  
+ z6^5 + z6^4 + 1,  z6^5 + z6^4 + z6^3 + 1,  z6^5 + z6^3 + 1,  z6^3 + 1,  z6^4 + z6,  z6^5 + z6^2,  z6^4 + z6 + 1,  z6^5 + z6^2 + z6,  
+ z6^4 + z6^2 + z6 + 1,  z6^5 + z6^3 + z6^2 + z6,  z6^2 + z6 + 1,  z6^3 + z6^2 + z6,  z6^4 + z6^3 + z6^2,  z6^5 + z6^4 + z6^3,  z6^5 + z6^3 + z6 + 1,
+ z6^3 + z6^2 + 1,  z6^4 + z6^3 + z6,  z6^5 + z6^4 + z6^2,  z6^5 + z6^4 + z6 + 1,  z6^5 + z6^4 + z6^3 + z6^2 + 1,  z6^5 + 1,  z6^4 + z6^3 + 1,  
+ z6^5 + z6^4 + z6,  z6^5 + z6^4 + z6^3 + z6^2 + z6 + 1,  z6^5 + z6^2 + 1,  z6^4 + 1,  z6^5 + z6,  z6^4 + z6^3 + z6^2 + z6 + 1,  
+ z6^5 + z6^4 + z6^3 + z6^2 + z6,  z6^5 + z6^2 + z6 + 1,  z6^4 + z6^2 + 1,  z6^5 + z6^3 + z6,  z6^3 + z6^2 + z6 + 1,  z6^4 + z6^3 + z6^2 + z6,  
+ z6^5 + z6^4 + z6^3 + z6^2,  z6^5 + z6 + 1,  z6^4 + z6^3 + z6^2 + 1,  z6^5 + z6^4 + z6^3 + z6,  z6^5 + z6^3 + z6^2 + z6 + 1,  z6^2 + 1,  
+ z6^3 + z6,  z6^4 + z6^2,  z6^5 + z6^3,  z6^3 + z6 + 1,  z6^4 + z6^2 + z6,  z6^5 + z6^3 + z6^2,  z6 + 1,  z6^2 + z6,  z6^3 + z6^2,  z6^4 + z6^3,  
+ z6^5 + z6^4,  z6^5 + z6^4 + z6^3 + z6 + 1,  z6^5 + z6^3 + z6^2 + 1,  1]
+```
+
+It basically list all the elements of the field.
+
+### Solution
+
+So back to the key generation
+
+```python
+def keygen(l):
+    key = [R[randint(1, 63)] for _ in range(l)] 
+    key = math.prod(key) # Optimization the key length :D
+    return key
+```
+
+It is a multiplication of random elements in `R = list(GF(64))`.
+
+As we know that field are closed under multiplication, this means that key will just be one of the element from the list.
+
+So to solve this challenge, we just iterate through all the elements in the field and it will be the correct key
+
+Now that we have the key, we need to break the encryption scheme.
+
+```python
+def substitute(c):
+    assert c in SET
+    return R[SET.index(c)]
+
+def encrypt(msg, key):
+    m64 = base64.b64encode(msg)
+    enc, pkey = '', key**1337
+    for m in m64:
+        enc += SET[R.index(pkey * substitute(chr(m)))]
+    return enc
+```
+
+The encryption works by multiplying the key with the substituted character, and map back the field element back to integer and then map it to a base64 character.
+
+We can simply code the decryption of the protocol.
+
+```python
+def decrypt(enc, key):
+    dec = ''
+    for e in enc:
+        dec += SET[R.index(R[SET.index(e)] / key)]
+    return base64.b64decode(dec)
+```
+
+Note that I omit `key**1337` because it is not necessary. It basically just map the key to another element of the field.
+
+Final solution script
+
+```python
+import string, base64
+
+SET = string.printable[:62] + '\\='
+R = list(GF(64))
+
+def rnadecode(msg):
+    ...
+
+def decrypt(enc, key):
+    ...
+
+c = open("out.txt", "r").read()
+c = rnadecode(c)
+
+# Loop through the elements
+for key in R[1:]:
+    try:
+        print(decrypt(c, key))
+    except:
+        continue
+
+```
+
+## Substitute-v2
+
+> No idea what to do v2 maybe some other substitution I guess?
+
+```python
+#!/usr/bin/env sage
+import string
+SET = "ABOH23{}_!?" + string.ascii_lowercase + string.digits
+n = len(SET)
+
+def encrypt(msg, f):
+    ct = ''
+    for c in msg:
+        ct += SET[f.substitute(SET.index(c))]
+    return ct
+
+P.<x> = PolynomialRing(GF(n))
+f = P.random_element(4)
+
+FLAG = open('../flag.txt', 'r').read().strip()
+
+enc = encrypt(FLAG, f)
+
+with open('out.txt', 'w') as f:
+    print(enc)
+    f.write(enc)
+```
+
+### Observation
+
+First we see that a polynomial over GF(n) is randomly chosen
+
+```python
+P.<x> = PolynomialRing(GF(n)) # Declare polynomial ring over GF(n)
+f = P.random_element(4) # Pick random element of degree 4
+```
+
+So much math, what does 'polynomial ring over GF(n)' means?
+
+In very simple terms, you just take every coefficient of the polynomial and modulo $$n$$
+
+For example if the polynomial is over GF(5), then
+
+$$3x^3 + 7x^2 + 5x + 11 \equiv 3x^3 + 2x^2 + 1 $$
+
+In this question, we have $$n = 47$$
+
+After choosing a random f, it is passed into the encrypt function 
+
+```python
+def encrypt(msg, f):
+    ct = ''
+    for c in msg:
+        ct += SET[f.substitute(SET.index(c))]
+    return ct
+```
+
+This is simple to explain. Each character is mapped to a number and `f.substitute()` is performed to it. Then the result is mapped back to another character.
+
+`f.substitute(a)` basically evaluate the function $$f$$ on value $$a$$. 
+
+In other words, we are calculating $$f(a)$$
+
+For example, if $$f(x) = x^2 + 3$$, 
+
+then `f.substitute(2) -> 2**2 + 3 -> 7` 
+
+### Solution
+
+Since the random function is of degree 4 and each of the coefficient can have up to $$n = 47$$ value, the search space is $$47^5 \approx 10^8$$.
+
+Which is kinda too large for us to just brute force the $$f$$.
+
+But since we know the flag format `ABOH23{`, we can solve equations to get back the original coefficient.
+
+The idea is to let 
+
+$$f(x) = ax^4 + bx^3 + cx^2 + dx + e$$
+
+with $$a,b,c,d,e$$ as unknowns, then we form 7 equations
+
+```
+f('A') - a * ('A')^4 + b * ('A')^3 + c * ('A')^2 + d * ('A') + e = 0
+f('B') - a * ('B')^4 + b * ('B')^3 + c * ('B')^2 + d * ('B') + e = 0
+f('O') - a * ('O')^4 + b * ('O')^3 + c * ('O')^2 + d * ('O') + e = 0
+f('H') - a * ('H')^4 + b * ('H')^3 + c * ('H')^2 + d * ('H') + e = 0
+f('2') - a * ('2')^4 + b * ('2')^3 + c * ('2')^2 + d * ('2') + e = 0
+f('3') - a * ('3')^4 + b * ('3')^3 + c * ('3')^2 + d * ('3') + e = 0
+f('{') - a * ('{')^4 + b * ('{')^3 + c * ('{')^2 + d * ('{') + e = 0
+```
+
+We can obtain `f('A'), f('B'), ...` by looking at the first 7 characters of the ciphertext.
+
+With 7 equations and 5 unknowns, we can solve system of equations with linear algebra (Just throw into sagemath to solve).
+
+Then we can recover the original function f
+
+```python
+import string
+SET = "ABOH23{}_!?" + string.ascii_lowercase + string.digits
+n = len(SET)
+
+format = "ABOH23{"
+
+P.<a,b,c,d,e> = PolynomialRing(GF(n))
+
+ct = open('out.txt', 'r').read().strip()
+
+eqs = []
+
+for i in range(len(format)):
+    t = SET.index(format[i])
+    eq = a * t^4 + b * t^3 + c * t^2 + d * t + e - SET.index(ct[i])
+    eqs.append(eq)
+
+basis = Ideal(eqs).groebner_basis()
+
+a = -basis[0].coefficients()[1]
+b = -basis[1].coefficients()[1]
+c = -basis[2].coefficients()[1]
+d = -basis[3].coefficients()[1]
+e = -basis[4].coefficients()[1]
+```
+
+With the original function, recovering the plaintext is trivial. 
+
+For each of the character `c`, we find `f(c)`. Then construct the inverse map. 
+
+Note that as the function is not bijective, there are multiple possible character for some of the character. With a bit of guessing we can recover the flag.
+
+Final solution script
+
+```python
+import string
+SET = "ABOH23{}_!?" + string.ascii_lowercase + string.digits
+n = len(SET)
+
+format = "ABOH23{"
+
+P.<a,b,c,d,e> = PolynomialRing(GF(n))
+
+ct = open('out.txt', 'r').read().strip()
+
+eqs = []
+
+for i in range(len(format)):
+    t = SET.index(format[i])
+    eq = a * t^4 + b * t^3 + c * t^2 + d * t + e - SET.index(ct[i])
+    eqs.append(eq)
+
+basis = Ideal(eqs).groebner_basis()
+
+a = -basis[0].coefficients()[1]
+b = -basis[1].coefficients()[1]
+c = -basis[2].coefficients()[1]
+d = -basis[3].coefficients()[1]
+e = -basis[4].coefficients()[1]
+
+inv_map = [[] for i in range(n)]
+
+for i in range(n):
+    index = a * i^4 + b * i^3 + c * i^2 + d * i + e
+    inv_map[index].append(i)
+        
+for i in ct:
+    for j in inv_map[SET.index(i)]:
+        print(SET[j], end=',')
+    print()
+```
+
+## Hash Clash
+
+<button class="collapsible btn" id="server">server.py</button>
+
+<div class="content" id="serverdata" style="display:none" markdown="1">
+
+```python
+import os
+import random
+import threading
+import time
+
+banner = """I think that my hash function should be free of collisions.
+However, if you prove me wrong by finding collisions, I'll reward you with a flag.
+Good luck!
+"""
+
+with open("flag.txt", "r") as f:
+    flag = f.read().strip()
+
+max_rounds = 30
+time_limit = 10
+s_charset = [chr(i) for i in range(33, 127)]
+s_min_len = 32
+s_max_len = 64
+
+def die(timeout):
+    time.sleep(timeout)
+    print("\n\nTime is up!")
+    os._exit(0)
+
+def simpleHashFunction(pt):
+    mod = 2**128
+    mult = 31107660549029995755035237740128219709
+    cur = 281483737825725237143369797025428684609
+    for c in pt:
+        cur = ((cur + ord(c)) * mult) % mod
+    ct = ""
+    for i in range(16):
+        ct = hex(cur % 256)[2:].zfill(2) + ct
+        cur >>= 8
+    return ct
+
+def generateRandomString(length, charset):
+    return ''.join([random.choice(charset) for i in range(length)])
+
+def main():
+    thr = threading.Thread(target=die, args=(time_limit,))
+    thr.start()
+
+    random.seed(time.time())
+    print(banner)
+    print(
+        "You will have",
+        time_limit,
+        "seconds to solve",
+        max_rounds,
+        "tests. Good luck!\n",
+    )
+
+    for rnd in range(max_rounds):
+        print(f"ROUND {rnd+1}/{max_rounds}:")
+
+        s = generateRandomString(random.randrange(s_min_len, s_max_len + 1), s_charset)
+        hsh = simpleHashFunction(s)
+        print("s =", s)
+        print("hash =", hsh)
+        print("> ", end="")
+
+        try:
+            raw_user_input = input()
+            if len(raw_user_input) > 1024:
+                print("Please keep your string to <= 1024 characters, exiting!", flush=True)
+                os._exit(0)
+
+            if raw_user_input == s:
+                print("Your string cannot be the same as my string, exiting!", flush=True)
+                os._exit(0)
+
+            for ch in raw_user_input:
+                if ch not in s_charset:
+                    print(f"Your string can only contain characters in the charset {s_charset}, exiting!", flush=True)
+                    os._exit(0)
+
+
+            user_hsh = simpleHashFunction(raw_user_input)
+            if hsh != user_hsh:
+                print(f"Your hash, {user_hsh}, does not match my hash, exiting!", flush=True)
+                os._exit(0)
+        except Exception as e:
+            print(e)
+            print("Unable to parse your input, exiting!", flush=True)
+            os._exit(0)
+
+        print("Collision Found!\n")
+
+    print("Congrats! Here's the flag:", flag)
+
+if __name__ == "__main__":
+    main()
+
+```
+
+</div>
+
+### Observation
+
+The server implemented a custom hash function, and we are tasked to construct an efficient hash inverse
+
+```python
+def simpleHashFunction(pt):
+    mod = 2**128
+    mult = 31107660549029995755035237740128219709
+    cur = 281483737825725237143369797025428684609
+    for c in pt:
+        cur = ((cur + ord(c)) * mult) % mod
+    ct = ""
+    for i in range(16):
+        ct = hex(cur % 256)[2:].zfill(2) + ct
+        cur >>= 8
+    return ct
+```
+
+Notice that the hash function implements an [LCG](https://en.wikipedia.org/wiki/Linear_congruential_generator)
+
+Let $$pt = b_{1}b_{2}...b_{n}$$, where $$b_{i}$$ represents the $$i$$ character
+
+The hash function above can be expand to be 
+
+$$
+\begin{aligned}
+    H(b_{1}b_{2}...b_{n}) &= [[[(c + b_{1}) * m] + b_{2} * m] \dots]\\
+    &= cm^n + b_{1}m^n + b_{2}m^{n-1} + \dots + b_{n}m^{1}
+\end{aligned}
+$$
+
+Since $$c$$ and $$m$$ are given, essentially we are task to find the root of the polynomial
+
+$$
+f(b_{1}, \dots, b_{n}) = b_{1}m^n + b_{2}m^{n-1} + \dots + b_{n}m^{1} + cm^n - h
+$$
+
+where h is the given hash, with the condition that $$b_{i}$$ must be in the range of $$[33, 127]$$
+
+There are lots of $$b_{i}$$ that satisifes the polynomial but the range restriction is a big problem.
+
+### Solution
+
+First notice that we can artifically subtract 70 for each of the $$b_i$$ to make the bound easier to handle
+
+$$
+f(b_{1}, \dots, b_{n}) = (b_{1} - 70)m^n + (b_{2} - 70)m^{n-1} + \dots + (b_{n} -70)m^{1} + cm^n - h
+$$
+
+Now the condition is $$b_{i}$$ must be in the range of $$[-37, 57]$$, so 
+
+$$|b_{i}| \leq 37$$
+
+I could pick a better bound but this is sufficient.
+
+Each of the $$b_{i}$$ are required to be small, so we can solve this by using Latice reduction LLL
+
+Construct the matrix
+
+$$
+\begin{bmatrix}
+    1 & 0 & 0 & \dots & Xm^n & 0\\
+    0 & 1 & 0 & \dots & Xm^{n-2} & 0\\
+    0 & 0 & 1 & \dots & Xm^{n-3} & 0\\
+    \vdots & \vdots & \vdots & \ddots & \vdots & \vdots\\
+    0 & 0 & 0 & \dots & Xt & 1
+\end{bmatrix}
+$$
+
+$$t$$ is the constant term of the polynomial, $$X$$ is the padding to make sure that the column will sum to 0. 
+
+I set it to be $$X = 2^{100}$$
+
+With around 32 characters, I can get small solution for $$b_{i}$$
+
+Output for one of the LLL iterations
+
+```
+[  0   1  -1   2   5   2   1   4   8  -3  -3   7   3   0  -3   3  -7   3  -1  -2   0  -2   2  -4  -6  -2  -1  11  -1  -7   1   4  -3  -3   0   0   0   0]
+[  5  -3  -4   1  -4   6  -1   3   0   3   8  -4  -2  -6  -1  -5   4  -2  -4   0  -4   0   1   8  -1   7   5  -5  -4   3  -3  -4  -3   3  -1   0   0   0]
+[  3   2   0   4  -6   7   1  -3   4   3   9  -1   2   2  -2  -1  -5   3  -5  -1  -9  -2   2   3  -1  -2   4  -6  -4   5   3   2   3   2   1  -1   0   1]
+[ -1  -1   2   2   1  -3   4  -8   0  -4   5  -9   5  -1   5   1  -5   2   2   1   3   0  -5   4  10  -3  -6  -7  -1   4   4   2   6   3   0   0   0   0]
+[  4  -2   1   0  -5  -3  -5   2  -3   4   3  -5  -2   4   2  -7   4   6  -4  -4  -5   2   1  -9   1   2   2  -3   2   1  -5  -5   2   1   3  -4   0   0]
+[  4   4  -1   2   6  -1   3  -5  -1  -1   6  -6   2 -11   1  -6  10   2   0   3  -5  -5  -3   3   3   5  -4  -2  -6   5  -6  -2  -2   6  -2   0   0   0]
+[ -2   4   4   0  -1  -6  -4  -6   1   4   2   0  -3  -1  -8   4   9  -5  -2   8 -10  -1   1   0   1   4   6  -6  -3   5   4   0  -3   0   4   0   0   1]
+[ -4   0  -2   4  -1  -1  -4   3   8  -4   2  -1   2   6  -2   6  -9  -1   8   5   1  -2  -2  10   2   3  -3  -1   0  -9   5   2   1   2   0   0   0   0]
+[ -4   4   1   6   2   6  -1  -7  -3   1  -2   1   1   4   1  -1   2   2   6   6   7  -5   1   2  -1  -1  -2   1   1   3  -5  -7   1   0  -7   3   0  -1]
+[  1   2  -1   5   2  -6  -3  -2   6  -1   4  -3   4  -2   0  -7   0  -1   7   1   6   4  -4   0   6   5   1   1   3  -1  -4  -6  -8  -4  -1   0   0  -1]
+...
+```
+
+As long as the second last element of the row is 0, the last element of the row is 1, then we have a collision.
+
+Final solution script
+
+```python
+from pwn import *
+
+r = remote("localhost", int(9999))
+
+n = 36; mult = 31107660549029995755035237740128219709
+mod = 2**128; cur = 281483737825725237143369797025428684609
+
+for i in range(30):
+    r.recvuntil(b"hash =")
+    h = int(r.recvline(), 16)
+
+    # Calculate Constant term
+    f = cur * mult**(n)
+    for j in range(n):
+        f = f + 70 * mult**(n - j)
+        f = f % mod
+    f = f - h
+
+    # Construct the Matrix
+    M = []
+    for j in range(n):
+        arr = [1 if j == k else 0 for k in range(n)]
+        arr.append(int((mult**(n - j)) % mod) << 100)
+        arr.append(0)
+        M.append(arr)
+
+    M.append([0 for _ in range(n)] + [int(f) << 100, 1])
+
+    M = Matrix(ZZ, M).LLL()
+
+    # Find good row
+    for i in range(n):
+        if (M[i][-1] == 1):
+            row = M[i]
+            break
+
+    # Send answer to server
+    ans = ''
+    for i in row[:-2]:
+        ans += chr(i + 70)
+
+    r.sendline(ans)
+
+r.interactive()
+```
