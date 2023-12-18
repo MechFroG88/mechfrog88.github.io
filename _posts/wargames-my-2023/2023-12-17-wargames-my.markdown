@@ -1187,3 +1187,151 @@ r.sendline(realToken)
 r.sendline(b"4")
 r.interactive()
 ```
+
+# PPC
+
+## Linux Memory Usage
+
+This challenge is solved by [@1001mei](https://github.com/1001mei), I temporarily put it here because he doesn't have a blog site yet
+
+There is a bunch of processes, some of them having parent-child relationship. We can model each process as a node and each parent-child relation as a directed edge, at the same time storing the amount of memory needed by each process in the corresponding node. 
+
+Now the answer for each query would be the total amount of memory used by the tree rooted at the queried node. To efficiently answer these queries, we can do a DFS from the queried node, adding up all the amount of memories. Before returning the value at each intermediate node, we store the mapping from "node" to "total amount of memories needed by the tree rooted at node", so that if a node is queried again, we could directly return the previous calculated result.
+
+After submitting the correct code on the DOMjudge platform and getting a correct result, we can find the flag in the submission details.
+
+Solution
+
+```cpp
+#include<iostream>
+#include<vector>
+#define N 100005
+
+using namespace std;
+
+typedef long long ll;
+
+vector<vector<int>> adj(N);
+vector<int> m(N);
+vector<ll> ans(N, -1);
+
+ll dfs(int x) {
+  if (ans[x] != -1) {
+    return ans[x];
+  }
+
+  ll t = m[x];
+  for (int i : adj[x])
+    t += dfs(i);
+
+  ans[x] = t;
+  return t;
+}
+
+int main() {
+  int n, q;
+  cin >> n >> q;
+  while (n--) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    adj[b].push_back(a);
+    m[a] = c;
+  }
+  while (q--) {
+    int p;
+    cin >> p;
+    cout << dfs(p) << '\n';
+  }
+}
+
+```
+
+## Lokami Temple
+
+This challenge is solved by [@1001mei](https://github.com/1001mei), I temporarily put it here because he doesn't have a blog site yet
+
+First, we model the doors and links as nodes and edges to get a tree. We then define maxDist(k) to be the maximum distance from node k to any other nodes.
+
+Basically what the problem wants is to find node(s) k, such that maxDist(k) is minimized. Intuitively, k would be close to or at the "center" of the graph, so we could expect maxDist(k) to be around (diameter of graph / 2). Since the total number of nodes is small (at most only 50), we could just brute force to find maxDist(x) for every node x to see which node indeed has minimum maxDist(x). For a node x, maxDist(x) can be found naively by doing BFS from x, keeping track the distance from x to every other nodes, and take the maximum of these distances.
+
+Nodes that have minimum maxDist would be entrance(s) and the most distant nodes from each of these entrance(s) would be the exit(s). Note that exit(s) could be easily found by either bookkeeping from previous BFSs or doing another round of BFS.
+Since the problem wants multiple entrance(s) and exit(s) to be listed in ascending order, we need to sort them first before outputting.
+The path length is the value of the minimum maxDist.
+
+After submitting the correct code on the DOMjudge platform and getting a correct result, we can find the flag in the submission details.
+
+Solution
+
+```cpp
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<algorithm>
+
+using namespace std;
+
+int main() {
+  int n;
+  cin >> n;
+  vector<vector<int>> adj(n + 1);
+  for (int i = 0; i < n - 1; i++) {
+    int a, b;
+    cin >> a >> b;
+    adj[a].push_back(b);
+    adj[b].push_back(a);
+  }
+
+
+  int pl = 100;
+  vector<int> s;
+  vector<vector<int>> e;
+  for (int i = 1; i <= n; i++) {
+    int cpl = 0;
+    vector<int> dist(n + 1, -1);
+    queue<int> q;
+    q.push(i);
+    dist[i] = 0;
+    while (!q.empty()) {
+      int cur = q.front();
+      q.pop();
+      for (int nxt: adj[cur]) {
+        if (dist[nxt] == -1) {
+          dist[nxt] = dist[cur] + 1;
+          cpl = max(cpl, dist[nxt]);
+          q.push(nxt);
+        }
+      }
+    }
+
+    //cout << pl <<  ' ' << cpl << endl;
+    if (cpl > pl) {
+      continue;
+    }
+    if (cpl < pl)
+      s.clear(), e.clear();
+    pl = cpl;
+    s.push_back(i);
+    vector<int> tmp;
+    for (int i = 0; i <= n; i++)
+      if (dist[i] == cpl)
+        tmp.push_back(i);
+    e.push_back(tmp);
+  }
+
+  cout << "Entrance(s):";
+  sort(s.begin(), s.end());
+  for (int i : s)
+    cout << ' ' << i;
+  cout << "\nExit(s):";
+  vector<int> fin;
+  for (auto g : e)
+    for (auto h : g)
+      fin.push_back(h);
+  sort(fin.begin(), fin.end());
+  for (int h : fin)
+    cout << ' ' << h;
+  cout << '\n';
+  cout << "Path Length: " << pl << '\n';
+}
+
+```
