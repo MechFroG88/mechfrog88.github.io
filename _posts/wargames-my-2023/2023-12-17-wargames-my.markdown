@@ -1,7 +1,7 @@
 ---
 layout: single
 title:  "Wargames My 2023"
-date:   2022-12-17 12:01:00 +0800
+date:   2023-12-17 12:01:00 +0800
 categories: wargames-2023
 permalink: /wargames-2023
 ---
