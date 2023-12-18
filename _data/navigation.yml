@@ -6,6 +6,26 @@ main:
     url: /notes
 
 docs:
+  - title: Wargames 2023
+    children:
+      - title: "Misc: Splice"
+        url: /wargames-2023#splice
+      - title: "Misc: Sayur"
+        url: /wargames-2023#sayur
+      - title: "Web: Warmup-Web"
+        url: /wargames-2023#warmup-web 
+      - title: "Web: Pet Store Viewer"
+        url: /wargames-2023#pet-store-viewer
+      - title: "Web: My First AI Project"
+        url: /wargames-2023#my-first-ai-project
+      - title: "Crypto: N-less RSA"
+        url: /wargames-2023#n-less-rsa
+      - title: "Crypto: Hohoho 2"
+        url: /wargames-2023#hohoho-2
+      - title: "Crypto: Hohoho 2 Continue"
+        url: /wargames-2023#hohoho-2-continue
+      
+
   - title: ABOH 2023
     children:
       - title: "Small Sage"
