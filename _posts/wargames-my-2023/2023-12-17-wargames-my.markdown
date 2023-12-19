@@ -943,7 +943,7 @@ lst = f.coefficients()
 target = (-lst[0]) / lst[1]
 
 ## Discrete log
-n = target.log(a)
+n = int(target.log(a))
 
 realToken = generateToken("Santa Claus")
 
@@ -1130,11 +1130,6 @@ r = remote("13.229.84.41", int(2001))
 m = 0xb00ce3d162f598b408e9a0f64b815b2f
 a = 0xaaa87c7c30adc1dcd06573702b126d0d
 c = 0xcaacf9ebce1cdf5649126bc06e69a5bb
-
-def generateToken(name):
-	x = bytes_to_long(name.encode(errors="surrogateescape"))
-	x = ((pow(a, n, (a-1)*m) - 1) // (a-1) * c + pow(a, n, m) * x) % m
-	return hex(x)[2:]
 
 ## Solve for x
 F.<x> = GF(m)[]
